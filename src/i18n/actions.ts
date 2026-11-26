@@ -16,6 +16,7 @@ export async function setLocale(locale: string) {
   // Utilisateur connecté : on retient son choix sur son profil.
   const session = await auth();
   if (session?.user?.id) {
-    await db.user.update({ where: { id: session.user.id }, data: { locale } });
+    // updateMany : ne plante pas si le compte n'existe plus (la DAL déconnectera l'utilisateur).
+    await db.user.updateMany({ where: { id: session.user.id }, data: { locale } });
   }
 }

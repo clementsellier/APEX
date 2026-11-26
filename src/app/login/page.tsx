@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { ThemeSwitcher } from "@/components/theme-switcher";
+import { getTheme } from "@/lib/theme-server";
 import { LoginForm } from "./login-form";
 
 // Comptes du seed, affichés uniquement en développement pour faciliter les tests.
@@ -23,12 +25,13 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
 }
 
 async function LoginCard({ searchParams }: { searchParams: PageProps<"/login">["searchParams"] }) {
-  const t = await getTranslations();
+  const [t, theme] = await Promise.all([getTranslations(), getTheme()]);
   const { callbackUrl } = await searchParams;
 
   return (
     <div className="w-full max-w-sm">
-      <div className="mb-6 flex justify-end">
+      <div className="mb-6 flex justify-end gap-2">
+        <ThemeSwitcher initial={theme} />
         <LocaleSwitcher />
       </div>
       <div className="rounded-2xl border border-black/10 bg-background/80 p-8 shadow-xl shadow-indigo-500/5 backdrop-blur dark:border-white/10">
