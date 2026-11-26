@@ -46,3 +46,7 @@ next-env.d.ts
 .eslintcache
 .turbo
 .swc
+
+/src/generated/prisma
+
+!.env.example
