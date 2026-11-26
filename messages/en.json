@@ -8,13 +8,46 @@
     "fr": "Français",
     "en": "English"
   },
-  "Status": {
-    "title": "Development environment",
-    "ready": "Database connected",
-    "unreachable": "Database unreachable — run \"docker compose up -d\"",
-    "users": "Users",
-    "accounts": "Healthcare professionals",
-    "plans": "Cycle plans",
+  "Login": {
+    "email": "Email address",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…",
+    "invalid": "Incorrect email or password.",
+    "demoAccounts": "Demo accounts",
+    "demoHint": "Shared password: see prisma/seed.ts. Shown in development only."
+  },
+  "Nav": {
+    "signOut": "Sign out"
+  },
+  "Roles": {
+    "FIELD_USER": "Field rep",
+    "FIELD_MANAGER": "Field manager",
+    "TEAM_MANAGER": "Team manager",
+    "HQ_USER": "Headquarters",
+    "ADMIN": "Administrator"
+  },
+  "Home": {
+    "hello": "Hello, {name}",
+    "comingSoon": "This area will be built in the next steps.",
+    "soon": "Soon"
+  },
+  "Field": {
+    "currentPlan": "Your current cycle plan is",
+    "nextPlan": "Your next cycle plan in creation is",
+    "noCurrentPlan": "No active cycle plan.",
+    "noNextPlan": "No cycle plan in preparation.",
+    "checkAndUpdate": "Check, and ask for an update",
+    "prepareNext": "Prepare your next cycle plan",
+    "statsOverview": "Stats and overview",
+    "targets": "{count, plural, =0 {no targets} one {# target} other {# targets}}"
+  },
+  "Manager": {
+    "title": "Your team's plans",
+    "empty": "No plans yet.",
+    "owner": "Field rep",
+    "plan": "Plan",
+    "status": "Status",
     "targets": "Targets"
   },
   "Plan": {

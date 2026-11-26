@@ -10,7 +10,7 @@ de le faire valider par leur manager, puis de l'envoyer dans le CRM. Interface F
 | Framework | Next.js 16 (App Router) + TypeScript |
 | Base de données | PostgreSQL 17 + PostGIS (Docker en local) |
 | ORM | Prisma 7 (`prisma/schema.prisma`, client généré dans `src/generated/prisma`) |
-| Authentification | Auth.js v5 (à brancher) |
+| Authentification | Auth.js v5 (identifiants, session JWT, rôles) — `src/auth.ts`, `src/lib/dal.ts`, `src/proxy.ts` |
 | Interface | Tailwind CSS 4 (+ shadcn/ui à ajouter), Framer Motion |
 | Tableaux / graphiques | TanStack Table, ECharts |
 | Langues | next-intl (cookie `NEXT_LOCALE`, fichiers `messages/fr.json` et `messages/en.json`) |

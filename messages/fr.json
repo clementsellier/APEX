@@ -8,13 +8,46 @@
     "fr": "Français",
     "en": "English"
   },
-  "Status": {
-    "title": "Environnement de développement",
-    "ready": "Base de données connectée",
-    "unreachable": "Base de données injoignable — lancez « docker compose up -d »",
-    "users": "Utilisateurs",
-    "accounts": "Professionnels de santé",
-    "plans": "Plans de cycle",
+  "Login": {
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "submit": "Se connecter",
+    "submitting": "Connexion…",
+    "invalid": "E-mail ou mot de passe incorrect.",
+    "demoAccounts": "Comptes de démonstration",
+    "demoHint": "Mot de passe commun : voir prisma/seed.ts. Visible en développement uniquement."
+  },
+  "Nav": {
+    "signOut": "Se déconnecter"
+  },
+  "Roles": {
+    "FIELD_USER": "Délégué terrain",
+    "FIELD_MANAGER": "Manager terrain",
+    "TEAM_MANAGER": "Manager d'équipe",
+    "HQ_USER": "Siège",
+    "ADMIN": "Administrateur"
+  },
+  "Home": {
+    "hello": "Bonjour, {name}",
+    "comingSoon": "Cet espace sera construit dans les prochaines étapes.",
+    "soon": "Bientôt"
+  },
+  "Field": {
+    "currentPlan": "Votre plan de cycle actuel est",
+    "nextPlan": "Votre prochain plan de cycle en préparation est",
+    "noCurrentPlan": "Aucun plan de cycle en cours.",
+    "noNextPlan": "Aucun plan de cycle en préparation.",
+    "checkAndUpdate": "Consulter et demander une mise à jour",
+    "prepareNext": "Préparer le prochain plan",
+    "statsOverview": "Statistiques et vue d'ensemble",
+    "targets": "{count, plural, =0 {aucune cible} one {# cible} other {# cibles}}"
+  },
+  "Manager": {
+    "title": "Plans de votre équipe",
+    "empty": "Aucun plan pour le moment.",
+    "owner": "Délégué",
+    "plan": "Plan",
+    "status": "Statut",
     "targets": "Cibles"
   },
   "Plan": {
