@@ -1,0 +1,29 @@
+{
+  "App": {
+    "name": "APEX",
+    "tagline": "Cycle plan management"
+  },
+  "Locale": {
+    "label": "Language",
+    "fr": "Français",
+    "en": "English"
+  },
+  "Status": {
+    "title": "Development environment",
+    "ready": "Database connected",
+    "unreachable": "Database unreachable — run \"docker compose up -d\"",
+    "users": "Users",
+    "accounts": "Healthcare professionals",
+    "plans": "Cycle plans",
+    "targets": "Targets"
+  },
+  "Plan": {
+    "status": {
+      "IN_CREATION": "In creation",
+      "IN_VALIDATION": "Awaiting validation",
+      "VALIDATED": "Validated",
+      "ACTIVE": "Active",
+      "COMPLETED": "Completed"
+    }
+  }
+}

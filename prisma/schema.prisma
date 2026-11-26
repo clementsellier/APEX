@@ -1,0 +1,272 @@
+// Schéma de données APEX — gestion des plans de cycle.
+// Source : tables.xlsx (T_fielduser, T_Plan, T_Target, T_TargetProduct, T_AccountQualif,
+// T_BrickTerr, T_MappingKPI) + schéma des tables du PowerPoint.
+// Les champs `crmId` gardent l'identifiant de l'objet dans le CRM pour la synchronisation.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Utilisateurs ────────────────────────────────────────────────────────────
+// Une seule table pour T_fielduser, T_fieldmanager, T_teammanager et T_otheruser :
+// le rôle distingue les profils, `managerId` porte la hiérarchie.
+
+enum Role {
+  FIELD_USER    // délégué terrain
+  FIELD_MANAGER // manager terrain : valide les plans
+  TEAM_MANAGER  // manager d'équipe : stats de son équipe
+  HQ_USER       // siège : lecture de tous les plans
+  ADMIN         // gestionnaire de l'application (back-office)
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum Locale {
+  fr
+  en
+}
+
+model User {
+  id               String     @id @default(cuid())
+  crmId            String?    @unique
+  email            String     @unique
+  passwordHash     String?
+  firstName        String
+  lastName         String
+  role             Role
+  status           UserStatus @default(ACTIVE)
+  locale           Locale     @default(fr)
+  team             String?    // ex. "FRONCO"
+  primaryRegion    String?
+  primaryTerritory String?    // ex. "Sect104"
+  lastLoginAt      DateTime?
+  lastLoginSuccess Boolean?
+
+  managerId String?
+  manager   User?   @relation("Hierarchy", fields: [managerId], references: [id])
+  reports   User[]  @relation("Hierarchy")
+
+  plans      Plan[]      @relation("PlanOwner")
+  planEvents PlanEvent[]
+  activities Activity[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─── Cycles et plans ─────────────────────────────────────────────────────────
+
+model Cycle {
+  id        String   @id @default(cuid())
+  code      String   @unique // ex. "26C2" = 2026, cycle 2
+  label     String?
+  startDate DateTime @db.Date
+  endDate   DateTime @db.Date
+  plans     Plan[]
+}
+
+enum PlanStatus {
+  IN_CREATION   // en cours de construction par le délégué
+  IN_VALIDATION // envoyé au manager terrain
+  VALIDATED     // validé, pas encore démarré
+  ACTIVE        // plan du cycle en cours
+  COMPLETED     // cycle terminé
+}
+
+model Plan {
+  id        String     @id @default(cuid())
+  crmId     String?    @unique
+  name      String     @unique // ex. "26C2-FRONCO-Sect104"
+  territory String
+  status    PlanStatus @default(IN_CREATION)
+
+  ownerId String
+  owner   User   @relation("PlanOwner", fields: [ownerId], references: [id])
+  cycleId String
+  cycle   Cycle  @relation(fields: [cycleId], references: [id])
+
+  targets Target[]
+  events  PlanEvent[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([ownerId, cycleId])
+}
+
+// Historique du circuit de validation (envoi, validation, renvoi, modifications du manager).
+enum PlanAction {
+  CREATED
+  SUBMITTED
+  VALIDATED
+  RETURNED
+  UPDATED_BY_MANAGER
+}
+
+model PlanEvent {
+  id        String     @id @default(cuid())
+  planId    String
+  plan      Plan       @relation(fields: [planId], references: [id], onDelete: Cascade)
+  actorId   String
+  actor     User       @relation(fields: [actorId], references: [id])
+  action    PlanAction
+  comment   String?
+  createdAt DateTime   @default(now())
+
+  @@index([planId])
+}
+
+// Une cible = un PDS retenu dans un plan, avec ses objectifs de contact.
+model Target {
+  id        String  @id @default(cuid())
+  planId    String
+  plan      Plan    @relation(fields: [planId], references: [id], onDelete: Cascade)
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id])
+
+  goalCall   Int @default(0) // visites
+  goalEvtAtt Int @default(0) // participations à des événements
+  goalAemail Int @default(0) // e-mails approuvés
+
+  // Objectifs théoriques proposés par l'algorithme (fonctionnalité secondaire)
+  calculatedGoalCall   Int?
+  calculatedGoalEvtAtt Int?
+  calculatedGoalAemail Int?
+
+  products TargetProduct[]
+
+  @@unique([planId, accountId])
+}
+
+model Product {
+  id      String          @id @default(cuid())
+  crmId   String?         @unique
+  name    String          @unique
+  targets TargetProduct[]
+}
+
+model TargetProduct {
+  id         String  @id @default(cuid())
+  targetId   String
+  target     Target  @relation(fields: [targetId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product @relation(fields: [productId], references: [id])
+  goalCall   Int     @default(0)
+  goalAemail Int     @default(0)
+
+  @@unique([targetId, productId])
+}
+
+// ─── Comptes (PDS) ───────────────────────────────────────────────────────────
+
+enum AccountType {
+  HCP      // professionnel de santé (médecin…)
+  PHARMACY
+}
+
+model Account {
+  id          String      @id @default(cuid())
+  crmId       String?     @unique
+  type        AccountType
+  title       String?     // "Dr", "Pr"
+  firstName   String?
+  lastName    String?
+  name        String      // nom affiché (pharmacie ou "Dr Aline VALOT")
+  specialty   String?     // "Cardiologue", "MG"…
+  workplace   String?     // "CH Besançon"
+  brickCode   String?
+  brick       Brick?      @relation(fields: [brickCode], references: [code])
+
+  addresses   Address[]
+  qualifs     AccountQualif[]
+  targets     Target[]
+  activities  Activity[]
+
+  @@index([brickCode])
+}
+
+model Address {
+  id         String  @id @default(cuid())
+  accountId  String
+  account    Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  line1      String
+  postalCode String?
+  city       String?
+  isPrimary  Boolean @default(true)
+  latitude   Float?  // géolocalisation (carte, fonctionnalité secondaire)
+  longitude  Float?
+}
+
+// Qualifications d'un PDS par équipe (ex. label "Potentiel" = "P1", label "HTA" = "HTA+").
+model AccountQualif {
+  id        String  @id @default(cuid())
+  team      String
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  label     String
+  value     String
+  color     String? // code couleur hexa, ex. "#E4572E"
+
+  @@unique([team, accountId, label])
+}
+
+// ─── Géographie et KPI ───────────────────────────────────────────────────────
+
+model Brick {
+  code      String     @id // ex. "25BES"
+  territory String     // ex. "Sect104"
+  accounts  Account[]
+  kpis      BrickKpi[]
+
+  @@index([territory])
+}
+
+// Libellés des KPI (T_MappingKPI) : Kpi1 → "Ventes produit A"…
+model KpiDefinition {
+  key    String     @id // "kpi1"…"kpi8"
+  label  String
+  unit   String?
+  values BrickKpi[]
+}
+
+// Valeurs des KPI par brick (T_BrickTerr), en format long pour ne pas figer 8 colonnes.
+model BrickKpi {
+  brickCode String
+  brick     Brick         @relation(fields: [brickCode], references: [code], onDelete: Cascade)
+  kpiKey    String
+  kpi       KpiDefinition @relation(fields: [kpiKey], references: [key])
+  value     Float
+
+  @@id([brickCode, kpiKey])
+}
+
+// ─── Activité réalisée ───────────────────────────────────────────────────────
+// Absente de l'Excel mais nécessaire aux écrans ("Call last cycle", "Last call date")
+// et aux statistiques "activité réalisée" : importée depuis le CRM.
+
+enum ActivityType {
+  CALL
+  EVT_ATT
+  AEMAIL
+}
+
+model Activity {
+  id        String       @id @default(cuid())
+  crmId     String?      @unique
+  type      ActivityType
+  date      DateTime
+  accountId String
+  account   Account      @relation(fields: [accountId], references: [id])
+  userId    String?
+  user      User?        @relation(fields: [userId], references: [id])
+
+  @@index([accountId, date])
+}
