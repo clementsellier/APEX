@@ -20,7 +20,7 @@ const PLAN_VIEW_SELECT = {
   id: true,
   name: true,
   status: true,
-  owner: { select: { firstName: true, lastName: true } },
+  owner: { select: { firstName: true, lastName: true, team: true } },
   cycle: { select: { code: true, startDate: true, endDate: true } },
   targets: {
     select: {
@@ -36,6 +36,7 @@ const PLAN_VIEW_SELECT = {
           specialty: true,
           workplace: true,
           brickCode: true,
+          qualifs: { select: { team: true, label: true, value: true, color: true } },
         },
       },
     },
@@ -256,5 +257,9 @@ export function toEditorTargets(plan: PlanView): EditorTarget[] {
     goalCall: t.goalCall,
     goalEvtAtt: t.goalEvtAtt,
     goalAemail: t.goalAemail,
+    // Qualifications de l'équipe du délégué (un PDS peut être qualifié par plusieurs équipes).
+    qualifs: t.account.qualifs
+      .filter((q) => !plan.owner.team || q.team === plan.owner.team)
+      .map(({ label, value, color }) => ({ label, value, color })),
   }));
 }

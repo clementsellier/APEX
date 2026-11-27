@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useFormatter, useTranslations } from "next-intl";
 import { AnimatedNumber } from "@/components/animated-number";
+import { QualifCell, qualifColumns } from "@/components/qualif";
 import type { Candidate } from "@/lib/plans";
 import { addTarget, undoAddTarget } from "./actions";
 
@@ -42,6 +43,8 @@ export function AddTargets({
   const [error, setError] = useState(false);
 
   const ofKind = useMemo(() => candidates.filter((c) => c.type === kind), [candidates, kind]);
+  // Une colonne par qualification présente pour ce type de compte.
+  const qualifLabels = useMemo(() => qualifColumns(ofKind), [ofKind]);
   const specialties = useMemo(
     () => [...new Set(ofKind.map((c) => c.specialty).filter((s): s is string => !!s))].sort(),
     [ofKind],
@@ -227,14 +230,21 @@ export function AddTargets({
       <p className="-mb-3 text-sm text-foreground/60">{t("results", { count: rows.length })}</p>
 
       <div className="overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
-        <table className="w-full min-w-[860px] text-left text-sm">
+        <table
+          className="w-full text-left text-sm"
+          style={{ minWidth: 760 + qualifLabels.length * 110 }}
+        >
           <thead className="bg-foreground/5 text-foreground/60">
             <tr>
               <th className="px-4 py-2.5 font-medium">{t("col.brick")}</th>
               <th className="px-4 py-2.5 font-medium">{t("col.name")}</th>
               {kind === "HCP" && <th className="px-4 py-2.5 font-medium">{t("col.specialty")}</th>}
               <th className="px-4 py-2.5 font-medium">{t("col.place")}</th>
-              <th className="px-4 py-2.5 font-medium">{t("col.qualifs")}</th>
+              {qualifLabels.map((label) => (
+                <th key={label} className="px-3 py-2.5 font-medium whitespace-nowrap">
+                  {label}
+                </th>
+              ))}
               <th className="px-2 py-2.5 text-center font-medium" colSpan={3}>
                 {t("col.lastCycle", { cycle })}
               </th>
@@ -264,24 +274,11 @@ export function AddTargets({
                       <td className="px-4 py-2.5 text-foreground/70">{c.specialty ?? "—"}</td>
                     )}
                     <td className="px-4 py-2.5 text-foreground/70">{c.workplace ?? "—"}</td>
-                    <td className="px-4 py-2.5">
-                      <div className="flex flex-wrap gap-1.5">
-                        {c.qualifs.length === 0 && <span className="text-foreground/40">—</span>}
-                        {c.qualifs.map((q) => (
-                          <span
-                            key={q.label}
-                            title={q.label}
-                            className="inline-flex items-center gap-1.5 rounded-full border border-black/10 px-2 py-0.5 text-xs font-medium dark:border-white/15"
-                          >
-                            <span
-                              className="h-2 w-2 rounded-full"
-                              style={{ backgroundColor: q.color ?? "currentColor" }}
-                            />
-                            {q.value}
-                          </span>
-                        ))}
-                      </div>
-                    </td>
+                    {qualifLabels.map((label) => (
+                      <td key={label} className="px-3 py-2.5">
+                        <QualifCell qualifs={c.qualifs} label={label} />
+                      </td>
+                    ))}
                     {(["call", "evtAtt", "aemail"] as const).map((key, i) => (
                       <td key={key} className="px-1 py-2.5 text-center">
                         <span

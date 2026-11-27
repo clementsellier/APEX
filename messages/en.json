@@ -125,7 +125,6 @@
       "name": "Name",
       "specialty": "Specialty",
       "place": "Place",
-      "qualifs": "Qualifications",
       "lastCycle": "{cycle} activity",
       "lastCall": "Last call"
     },
