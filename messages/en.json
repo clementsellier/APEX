@@ -29,7 +29,6 @@
   },
   "Home": {
     "hello": "Hello, {name}",
-    "comingSoon": "This area will be built in the next steps.",
     "soon": "Soon"
   },
   "Field": {
@@ -259,9 +258,11 @@
       "perAccount": "Int. / HCP"
     },
     "tabs": {
+      "plan": "Plan",
       "stats": "Dashboard",
       "map": "Map"
-    }
+    },
+    "backToList": "Back to plans"
   },
   "Admin": {
     "nav": {
@@ -503,7 +504,7 @@
     "targetsIn": "{count, plural, =0 {No target} one {# target} other {# targets}} in this UGA",
     "goals": "{call} calls · {evtAtt} evt · {aemail} mail",
     "noTargetsHere": "Use the add-target screen to cover this UGA.",
-    "panelTitle": "Your territory",
+    "panelTitle": "Plan territory",
     "panelHint": "Hover a UGA to see its figures, click it to list its targets.",
     "summary": "{zones} UGAs · {targets} targets, {located} located",
     "view": {
@@ -522,5 +523,45 @@
     "ctrlScroll": "Use Ctrl + scroll to zoom the map",
     "cmdScroll": "Use ⌘ + scroll to zoom the map",
     "twoFingers": "Use two fingers to move the map"
+  },
+  "Overview": {
+    "scope": {
+      "TEAM_MANAGER": "Plans of your team's field reps.",
+      "HQ_USER": "Plans of all teams."
+    },
+    "pipeline": "Plan pipeline",
+    "filter": {
+      "search": "Search a plan, a rep, a territory…",
+      "status": "Status",
+      "cycle": "Cycle",
+      "allCycles": "All cycles",
+      "manager": "Field manager",
+      "allManagers": "All managers",
+      "statuses": {
+        "validated": "Approved plans",
+        "all": "All statuses",
+        "IN_CREATION": "In progress",
+        "IN_VALIDATION": "Awaiting approval"
+      }
+    },
+    "tile": {
+      "targets": "Targets",
+      "plans": "{count, plural, =0 {no plan} one {# plan} other {# plans}} shown",
+      "interactions": "Planned interactions",
+      "calls": "including {count} calls",
+      "perTarget": "Interactions per target",
+      "perTargetHint": "average of plans shown"
+    },
+    "col": {
+      "plan": "Plan",
+      "owner": "Field rep",
+      "manager": "Field manager",
+      "status": "Status",
+      "targets": "Targets",
+      "interactions": "Planned interactions"
+    },
+    "goals": "{call} calls · {evtAtt} events · {aemail} e-mails",
+    "open": "Open",
+    "empty": "No plan matches these filters."
   }
 }

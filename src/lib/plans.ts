@@ -2,7 +2,9 @@ import "server-only";
 import { notFound, redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { getCurrentUser, requireRole } from "@/lib/dal";
+import type { Prisma } from "@/generated/prisma/client";
 import type { PlanStatus } from "@/generated/prisma/enums";
+import { planScopeFor } from "@/lib/plan-access";
 import type { EditorTarget } from "@/app/(app)/field/plans/[planId]/plan-editor";
 
 // Statuts dans lesquels le délégué peut modifier son plan directement.
@@ -42,7 +44,7 @@ const PLAN_VIEW_SELECT = {
 
 type PlanView = NonNullable<Awaited<ReturnType<typeof findPlanView>>>;
 
-function findPlanView(where: { id: string; ownerId?: string; owner?: { managerId: string } }) {
+function findPlanView(where: Prisma.PlanWhereInput) {
   return db.plan.findFirst({ where, select: PLAN_VIEW_SELECT });
 }
 
@@ -59,6 +61,14 @@ function sortTargets(plan: PlanView) {
 export async function getOwnPlanForEditor(planId: string) {
   const user = await requireRole("FIELD_USER");
   const plan = await findPlanView({ id: planId, ownerId: user.id });
+  if (!plan) notFound();
+  return sortTargets(plan);
+}
+
+/** Plan en lecture seule pour le manager d'équipe (son équipe) ou le siège (tous). 404 sinon. */
+export async function getPlanForOverview(planId: string) {
+  const user = await requireRole("TEAM_MANAGER", "HQ_USER");
+  const plan = await findPlanView({ AND: [{ id: planId }, planScopeFor(user)!] });
   if (!plan) notFound();
   return sortTargets(plan);
 }

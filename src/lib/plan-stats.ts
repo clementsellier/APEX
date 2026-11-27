@@ -2,6 +2,7 @@ import "server-only";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { getCurrentUser } from "@/lib/dal";
+import { planScopeFor } from "@/lib/plan-access";
 import type { ActivityType, PlanStatus } from "@/generated/prisma/enums";
 
 // Analyse d'un plan (maquette slide 16) : par brick, activité prévue par le plan,
@@ -56,22 +57,16 @@ const ACTIVITY_KEY: Record<ActivityType, keyof Activity> = {
 const ratio = (a: number, b: number) => (b > 0 ? a / b : null);
 
 /**
- * Statistiques d'un plan, accessibles à son délégué et à son manager terrain.
+ * Statistiques d'un plan, accessibles selon la hiérarchie (voir planScopeFor).
  * Référence : le cycle précédent pour un plan en préparation ; le cycle du plan lui-même
  * (réalisé à date) pour un plan en cours ou terminé.
  */
 export async function getPlanStats(planId: string): Promise<PlanStats> {
-  const user = await getCurrentUser();
-  const scope =
-    user.role === "FIELD_USER"
-      ? { ownerId: user.id }
-      : user.role === "FIELD_MANAGER"
-        ? { owner: { managerId: user.id } }
-        : null;
+  const scope = planScopeFor(await getCurrentUser());
   if (!scope) notFound();
 
   const plan = await db.plan.findFirst({
-    where: { id: planId, ...scope },
+    where: { AND: [{ id: planId }, scope] },
     select: {
       id: true,
       name: true,
@@ -159,7 +154,7 @@ export async function getPlanStats(planId: string): Promise<PlanStats> {
   const marketTotal = bricks.reduce((sum, b) => sum + (kpi.get(b.code)?.get(MARKET_KPI) ?? 0), 0);
   const planTotal = [...byBrick.values()].reduce((sum, acc) => sum + interactions(acc.plan), 0);
 
-  const rows: BrickStats[] = [...byBrick.entries()].map(([brick, acc]) => {
+  const allRows: BrickStats[] = [...byBrick.entries()].map(([brick, acc]) => {
     const planInteractions = interactions(acc.plan);
     const actualInteractions = interactions(acc.actual);
     const sales = kpi.get(brick)?.get(MARKET_KPI);
@@ -185,6 +180,15 @@ export async function getPlanStats(planId: string): Promise<PlanStats> {
       },
     };
   });
+  // Seulement les UGA qui ont quelque chose à montrer (activité prévue ou réalisée, données
+  // marché) : un secteur peut compter des dizaines d'UGA sans aucune donnée.
+  const rows = allRows.filter(
+    (r) =>
+      r.plan.interactions > 0 ||
+      r.plan.targets > 0 ||
+      r.market.share !== null ||
+      r.actual.interactions > 0,
+  );
   // Bricks les plus lourdes du marché d'abord, comme sur la maquette.
   rows.sort(
     (a, b) =>
