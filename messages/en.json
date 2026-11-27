@@ -90,7 +90,8 @@
       "saving": "Saving…",
       "saved": "Saved",
       "error": "Save failed — reload the page"
-    }
+    },
+    "stats": "Plan analysis"
   },
   "Theme": {
     "label": "Theme",
@@ -202,5 +203,60 @@
       }
     },
     "removed": "removed from plan"
+  },
+  "Stats": {
+    "back": "Back to plan",
+    "title": "Plan analysis",
+    "comparedTo": "compared to: {label}",
+    "actual": {
+      "previous": "{cycle} actual (previous cycle)",
+      "current": "{cycle} actual (to date)",
+      "none": "no reference cycle"
+    },
+    "tile": {
+      "interactions": "Planned interactions",
+      "vsActual": "{sign}{value}% vs {cycle} actual",
+      "targets": "Targets",
+      "accounts": "{count, plural, =0 {no HCP seen} one {# HCP seen} other {# HCPs seen}} in {cycle}",
+      "perTarget": "Interactions per target",
+      "perAccount": "{value} per HCP seen in {cycle}",
+      "alignment": "Market alignment",
+      "alignmentHint": "100% = activity split like the market"
+    },
+    "chart": {
+      "title": "Brick weight: plan vs market",
+      "intro": "Share of planned activity in each brick, compared to its weight in the territory's sales.",
+      "legend": "Legend",
+      "plan": "Share of plan activity",
+      "market": "Market weight",
+      "noData": "no market data",
+      "aria": "Brick {brick}: plan {plan}%, market {market}%",
+      "tooltipTitle": "Brick {brick}",
+      "evolution": "Growth index",
+      "over": "Brick over-invested by {gap} points versus its market weight.",
+      "under": "Brick under-invested by {gap} points versus its market weight.",
+      "gapHint": "▲ / ▼: gap in points between plan share and market weight.",
+      "points": "{gap} pts"
+    },
+    "table": {
+      "title": "Detail by brick",
+      "plan": "Plan",
+      "market": "Performance",
+      "brick": "Brick",
+      "total": "Total",
+      "note": "Interactions = calls + event attendances + approved e-mails. Growth index: sales vs previous year, base 100."
+    },
+    "col": {
+      "call": "Calls",
+      "evtAtt": "Events",
+      "aemail": "E-mails",
+      "interactions": "Interactions",
+      "targets": "Targets",
+      "perTarget": "Int. / target",
+      "share": "Market weight",
+      "evolution": "Growth idx",
+      "accounts": "HCPs seen",
+      "perAccount": "Int. / HCP"
+    }
   }
 }
