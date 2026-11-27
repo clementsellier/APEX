@@ -46,7 +46,7 @@ model User {
   locale           Locale     @default(fr)
   team             String?    // ex. "FRONCO"
   primaryRegion    String?
-  primaryTerritory String?    // ex. "Sect104"
+  primaryTerritory String?    // ex. "S105"
   lastLoginAt      DateTime?
   lastLoginSuccess Boolean?
 
@@ -84,7 +84,7 @@ enum PlanStatus {
 model Plan {
   id        String     @id @default(cuid())
   crmId     String?    @unique
-  name      String     @unique // ex. "26C2-FRONCO-Sect104"
+  name      String     @unique // ex. "26C2-FRONCO-S105"
   territory String
   status    PlanStatus @default(IN_CREATION)
 
@@ -222,11 +222,16 @@ model AccountQualif {
 
 // ─── Géographie et KPI ───────────────────────────────────────────────────────
 
+// Brick = UGA IQVIA (unité géographique d'analyse), ex. "25BES".
 model Brick {
-  code      String     @id // ex. "25BES"
-  territory String     // ex. "Sect104"
-  accounts  Account[]
-  kpis      BrickKpi[]
+  code       String     @id // ex. "25BES"
+  territory  String?    // secteur auquel l'UGA est rattachée, ex. "S105" (null = non sectorisée)
+  department String?    // ex. "25"
+  // Contour simplifié (géométrie GeoJSON en WGS84), importé depuis le fichier IQVIA.
+  shape      Json?
+  accounts   Account[]
+  kpis       BrickKpi[]
+  updatedAt  DateTime   @default(now()) @updatedAt
 
   @@index([territory])
 }

@@ -257,6 +257,10 @@
       "evolution": "Growth idx",
       "accounts": "HCPs seen",
       "perAccount": "Int. / HCP"
+    },
+    "tabs": {
+      "stats": "Dashboard",
+      "map": "Map"
     }
   },
   "Admin": {
@@ -264,7 +268,8 @@
       "label": "Back office",
       "home": "Home",
       "users": "Users",
-      "cycles": "Cycles"
+      "cycles": "Cycles",
+      "map": "Map"
     },
     "status": {
       "ACTIVE": "Active",
@@ -313,7 +318,7 @@
       },
       "hint": {
         "team": "E.g. FRONCO",
-        "territory": "E.g. Sect104 — required for a field rep"
+        "territory": "E.g. S105 — required for a field rep"
       },
       "chooseManager": "Choose…",
       "selfLocked": "You can't change your own role or status.",
@@ -399,6 +404,116 @@
         "hasPlans": "Not possible: plans are attached to this cycle.",
         "failed": "Saving failed. Try again."
       }
+    },
+    "map": {
+      "title": "Zone map",
+      "intro": "IQVIA UGA territory design: each UGA belongs to a territory, assigned to a field rep.",
+      "empty": "No UGA boundary imported: load the IQVIA GeoJSON file below.",
+      "withoutShape": "{count} of {total} UGAs have no boundary.",
+      "aria": "Map of UGAs and territories",
+      "legend": {
+        "assigned": "Assigned UGA",
+        "unassigned": "Unassigned",
+        "sector": "Territory {code}",
+        "otherSector": "Other territory",
+        "target": "Assigned to {code}",
+        "border": "Territory border"
+      },
+      "department": "Dept {code}",
+      "inSector": "territory {code}",
+      "accounts": "{count, plural, =0 {no HCP} one {# HCP} other {# HCPs}}",
+      "clickToAssign": "Click to assign to {code}",
+      "clickToRemove": "Click to remove from territory",
+      "coverage": "{assigned} of {total} UGAs assigned · {sectors} territories",
+      "sectors": "Territories",
+      "allFrance": "All of France",
+      "zonesCount": "{count} UGAs",
+      "noRep": "No field rep",
+      "edit": {
+        "start": "Edit territory design",
+        "title": "Editing",
+        "sector": "Territory to fill (existing or new)",
+        "hint": "Click a UGA to assign it to this territory; click again to remove it. Territory borders are recomputed on save.",
+        "pending": "{count, plural, =0 {No change} one {# UGA changed} other {# UGAs changed}}",
+        "save": "Save ({count})",
+        "cancel": "Cancel",
+        "failed": "Saving failed."
+      },
+      "import": {
+        "title": "Import the referential",
+        "intro": "Boundaries (IQVIA GeoJSON) and/or the UGA list with their territory (Excel). Analyze first: nothing changes until you click “Import”.",
+        "geo": "UGA boundaries",
+        "geoHint": "GeoJSON with a “UGA” property per zone",
+        "list": "UGA list",
+        "listHint": "Excel with UGA, Département, SECTEUR columns",
+        "analyze": "Analyze",
+        "analyzing": "Analyzing…",
+        "apply": "Import",
+        "importing": "Importing…",
+        "preview": "Import preview",
+        "applied": "Import done: {count} UGAs updated.",
+        "total": "{count} UGAs in total after import",
+        "shapes": "{count} boundaries (simplified for display)",
+        "created": "{count, plural, =0 {no new UGA} one {# new UGA} other {# new UGAs}}",
+        "moved": "{count, plural, =0 {no territory change} one {# UGA changes territory} other {# UGAs change territory}}",
+        "withoutShape": "{count} UGAs in the list have no boundary: {codes}…",
+        "sectors": "Territories:",
+        "movedWithPlans": "These UGAs change territory while plans target HCPs there: {codes}",
+        "errors": {
+          "noFile": "Choose at least one file.",
+          "geoInvalid": "The boundary file isn't valid GeoJSON.",
+          "geoNoCode": "No GeoJSON zone has a “UGA” property.",
+          "excelInvalid": "The Excel file can't be read.",
+          "excelNoColumns": "“UGA” column not found in the first sheet.",
+          "failed": "The import failed."
+        }
+      }
     }
+  },
+  "Map": {
+    "sector": "territory {code}",
+    "noShapes": "The boundaries of this territory's UGAs haven't been imported yet. The admin can load them from the back office (Map tab).",
+    "withoutShape": "UGAs without boundary: {codes}",
+    "indicator": "Indicator",
+    "indicators": {
+      "gap": "Plan vs market gap",
+      "market": "Market weight",
+      "evolution": "Growth",
+      "interactions": "Planned activity"
+    },
+    "hints": {
+      "gap": "Blue: plan share above market weight · red: below.",
+      "market": "Weight of each UGA in the territory's sales.",
+      "evolution": "Sales growth index vs previous year (base 100).",
+      "interactions": "Number of interactions planned."
+    },
+    "legend": "Legend",
+    "targetPoint": "Plan target",
+    "aria": "Map of the territory's UGAs",
+    "metric": {
+      "planShare": "Plan share",
+      "market": "Market weight",
+      "gap": "Gap",
+      "evolution": "Growth index",
+      "targets": "Targets",
+      "interactions": "Planned interactions"
+    },
+    "noActivity": "No planned activity or market data.",
+    "close": "Close",
+    "targetsIn": "{count, plural, =0 {No target} one {# target} other {# targets}} in this UGA",
+    "goals": "{call} calls · {evtAtt} evt · {aemail} mail",
+    "noTargetsHere": "Use the add-target screen to cover this UGA.",
+    "panelTitle": "Your territory",
+    "panelHint": "Hover a UGA to see its figures, click it to list its targets.",
+    "summary": "{zones} UGAs · {targets} targets, {located} located",
+    "showAll": "Show whole territory",
+    "showFocus": "Focus on my targets"
+  },
+  "MapControls": {
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "ctrlScroll": "Use Ctrl + scroll to zoom the map",
+    "cmdScroll": "Use ⌘ + scroll to zoom the map",
+    "twoFingers": "Use two fingers to move the map"
   }
 }

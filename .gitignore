@@ -50,3 +50,9 @@ next-env.d.ts
 /src/generated/prisma
 
 !.env.example
+
+# Référentiel géographique IQVIA (données sous licence : ne pas committer)
+/prisma/data/
+
+# Worker MapLibre copié à l installation
+/public/vendor/

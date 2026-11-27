@@ -30,7 +30,7 @@ export type BrickStats = {
 };
 
 export type PlanStats = {
-  plan: { id: string; name: string; status: PlanStatus; owner: string };
+  plan: { id: string; name: string; status: PlanStatus; owner: string; territory: string };
   /** Période à laquelle le plan est comparé. */
   reference: { kind: "previous" | "current"; cycle: string } | null;
   bricks: BrickStats[];
@@ -220,6 +220,7 @@ export async function getPlanStats(planId: string): Promise<PlanStats> {
       name: plan.name,
       status: plan.status,
       owner: `${plan.owner.firstName} ${plan.owner.lastName}`,
+      territory: plan.territory,
     },
     reference: referenceCycle
       ? { kind: inProgress ? "current" : "previous", cycle: referenceCycle.code }
