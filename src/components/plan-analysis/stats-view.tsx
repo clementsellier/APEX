@@ -89,7 +89,7 @@ export async function PlanStatsView({
         {tiles.map((tile, i) => (
           <div
             key={tile.label}
-            className="relative overflow-hidden rounded-xl border border-black/10 p-4 dark:border-white/10"
+            className="relative overflow-hidden rounded-xl border bg-surface border-black/10 p-4 dark:border-white/10"
           >
             <div className={`absolute inset-x-0 top-0 h-1 ${ACCENTS[i]}`} />
             <div className="text-sm text-foreground/60">{tile.label}</div>
@@ -99,7 +99,7 @@ export async function PlanStatsView({
         ))}
       </section>
 
-      <section className="rounded-2xl border border-black/10 p-5 dark:border-white/10">
+      <section className="rounded-2xl border bg-surface border-black/10 p-5 dark:border-white/10">
         <h2 className="font-medium">{t("Stats.chart.title")}</h2>
         <p className="mb-4 text-sm text-foreground/60">{t("Stats.chart.intro")}</p>
         <ShareChart
@@ -114,7 +114,7 @@ export async function PlanStatsView({
 
       <section>
         <h2 className="mb-3 font-medium">{t("Stats.table.title")}</h2>
-        <div className="overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
+        <div className="overflow-x-auto rounded-2xl border bg-surface border-black/10 dark:border-white/10">
           <table className="w-full min-w-[960px] text-right text-sm tabular-nums">
             <thead className="text-foreground/60">
               <tr className="bg-foreground/5 text-xs tracking-wide uppercase">

@@ -211,7 +211,7 @@ export function PlanEditor({
         {GOALS.map((key, i) => (
           <div
             key={key}
-            className="relative overflow-hidden rounded-xl border border-black/10 p-3 dark:border-white/10 sm:p-4"
+            className="relative overflow-hidden rounded-xl border bg-surface border-black/10 p-3 dark:border-white/10 sm:p-4"
           >
             <div className={`absolute inset-x-0 top-0 h-1 ${ACCENTS[i]}`} />
             <div className="text-xs text-foreground/60 sm:text-sm">
@@ -232,7 +232,7 @@ export function PlanEditor({
         return (
           <section
             key={brick}
-            className="overflow-hidden rounded-2xl border border-black/10 dark:border-white/10"
+            className="overflow-hidden rounded-2xl border bg-surface border-black/10 dark:border-white/10"
           >
             <header className="flex flex-wrap items-center justify-between gap-2 bg-foreground/5 px-4 py-3">
               <h2 className="font-medium">{t("PlanEditor.brick", { code: brick })}</h2>
@@ -396,7 +396,7 @@ function SubmitDialog({
         exit={{ scale: 0.95, y: 8 }}
         onClick={(e) => e.stopPropagation()}
         onKeyDown={(e) => e.key === "Escape" && !busy && onClose()}
-        className="w-full max-w-md rounded-2xl border border-black/10 bg-background p-6 shadow-xl dark:border-white/15"
+        className="w-full max-w-md rounded-2xl border border-black/10 bg-surface p-6 shadow-xl dark:border-white/15"
       >
         <h2 id="submit-title" className="text-lg font-semibold">
           {t("Submit.title")}

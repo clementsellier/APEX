@@ -49,7 +49,7 @@ export function CycleForm({
       key={formKey}
       action={formAction}
       noValidate
-      className="grid gap-4 rounded-2xl border border-black/10 p-5 sm:grid-cols-[8rem_1fr_10rem_10rem_auto] sm:items-start dark:border-white/10"
+      className="grid gap-4 rounded-2xl border bg-surface border-black/10 p-5 sm:grid-cols-[8rem_1fr_10rem_10rem_auto] sm:items-start dark:border-white/10"
     >
       <Field label={t("field.code")} error={err("code")} hint={t("hint.code")}>
         <input

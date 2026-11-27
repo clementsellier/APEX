@@ -36,7 +36,7 @@ export function ImportCard({ kind }: { kind: ImportKind }) {
   const importable = preview ? preview.created + preview.updated : 0;
 
   return (
-    <section className="flex flex-col gap-4 rounded-2xl border border-black/10 p-5 dark:border-white/10">
+    <section className="flex flex-col gap-4 rounded-2xl border bg-surface border-black/10 p-5 dark:border-white/10">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="font-medium">{t(`kinds.${kind}.title`)}</h2>

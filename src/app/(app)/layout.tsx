@@ -11,7 +11,7 @@ import { logout } from "./actions";
 export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <div className="flex flex-1 flex-col">
-      <header className="border-b border-black/10 dark:border-white/10">
+      <header className="border-b border-black/[0.06] bg-surface dark:border-white/10">
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <span className="text-lg font-semibold tracking-tight">APEX</span>
           <div className="flex items-center gap-3">

@@ -160,7 +160,7 @@ export function AddTargets({
       </div>
 
       {/* Filtres */}
-      <section className="flex flex-col gap-3 rounded-2xl border border-black/10 p-4 dark:border-white/10">
+      <section className="flex flex-col gap-3 rounded-2xl border bg-surface border-black/10 p-4 dark:border-white/10">
         <div className="flex flex-wrap gap-3">
           <input
             type="search"
@@ -229,7 +229,7 @@ export function AddTargets({
 
       <p className="-mb-3 text-sm text-foreground/60">{t("results", { count: rows.length })}</p>
 
-      <div className="overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
+      <div className="overflow-x-auto rounded-2xl border bg-surface border-black/10 dark:border-white/10">
         <table
           className="w-full text-left text-sm"
           style={{ minWidth: 760 + qualifLabels.length * 110 }}

@@ -79,7 +79,7 @@ async function PlanCard({
   const t = await getTranslations();
 
   return (
-    <section className="relative overflow-hidden rounded-2xl border border-black/10 p-6 dark:border-white/10">
+    <section className="relative overflow-hidden rounded-2xl border bg-surface border-black/10 p-6 dark:border-white/10">
       <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${accent}`} />
       {plan ? (
         <>

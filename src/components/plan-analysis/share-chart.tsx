@@ -96,7 +96,7 @@ export function ShareChart({ rows }: { rows: ShareRow[] }) {
               {hover === r.brick && (
                 <div
                   role="tooltip"
-                  className="pointer-events-none absolute top-full right-2 z-10 mt-1 w-64 rounded-lg border border-black/10 bg-background p-3 text-xs shadow-lg dark:border-white/15"
+                  className="pointer-events-none absolute top-full right-2 z-10 mt-1 w-64 rounded-lg border border-black/10 bg-surface p-3 text-xs shadow-lg dark:border-white/15"
                 >
                   <p className="mb-1.5 font-medium">{t("tooltipTitle", { brick: r.brick })}</p>
                   <p className="flex justify-between">

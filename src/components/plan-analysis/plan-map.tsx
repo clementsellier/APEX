@@ -274,7 +274,7 @@ export function PlanMap({
           ariaLabel={t("aria")}
         />
 
-        <aside className="rounded-2xl border border-black/10 p-4 text-sm dark:border-white/10">
+        <aside className="rounded-2xl border bg-surface border-black/10 p-4 text-sm dark:border-white/10">
           {selected ? (
             <div className="flex flex-col gap-4">
               <div className="flex items-start justify-between gap-2">

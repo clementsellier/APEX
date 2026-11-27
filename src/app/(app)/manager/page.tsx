@@ -63,7 +63,7 @@ async function ManagerHomeContent() {
         {plans.length === 0 ? (
           <p className="text-foreground/60">{t("Manager.empty")}</p>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
+          <div className="overflow-x-auto rounded-2xl border bg-surface border-black/10 dark:border-white/10">
             <table className="w-full text-left text-sm">
               <thead className="bg-foreground/5 text-foreground/60">
                 <tr>
