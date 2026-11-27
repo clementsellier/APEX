@@ -119,6 +119,8 @@ model PlanEvent {
   actor     User       @relation(fields: [actorId], references: [id])
   action    PlanAction
   comment   String?
+  // Détail des modifications du manager (UPDATED_BY_MANAGER) : objectifs avant / après par cible.
+  changes   Json?
   createdAt DateTime   @default(now())
 
   @@index([planId])

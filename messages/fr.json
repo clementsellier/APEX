@@ -167,7 +167,8 @@
     "validate": "Valider le plan",
     "confirmValidate": "Confirmer la validation de ce plan ?",
     "needComment": "Expliquez au délégué ce qu'il doit revoir.",
-    "failed": "L'opération a échoué. Rechargez la page : le plan a peut-être déjà été traité."
+    "failed": "L'opération a échoué. Rechargez la page : le plan a peut-être déjà été traité.",
+    "editHint": "Vous pouvez ajuster les objectifs ou retirer des cibles avant de décider : {name} verra le détail de vos modifications dans l'historique."
   },
   "Workflow": {
     "history": "Historique",
@@ -194,7 +195,12 @@
       "readOnly": {
         "field": "Ce plan est en lecture seule. Les demandes de modification seront possibles dans une prochaine étape.",
         "manager": "Ce plan est en lecture seule."
+      },
+      "edited": {
+        "field": "Votre manager a modifié certains objectifs : le détail est dans l'historique.",
+        "manager": "Vos modifications sont détaillées dans l'historique."
       }
-    }
+    },
+    "removed": "retiré du plan"
   }
 }

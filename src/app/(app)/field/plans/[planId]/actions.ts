@@ -5,7 +5,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/dal";
 import { requireEditableTarget } from "@/lib/plans";
-import { MAX_COMMENT, transitionPlan } from "@/lib/plan-workflow";
+import { lockPlan, MAX_COMMENT, recordManagerChange, transitionPlan } from "@/lib/plan-workflow";
 
 const MAX_GOAL = 99;
 
@@ -18,15 +18,39 @@ const goalsSchema = z.object({
 
 export type SaveResult = { ok: true } | { ok: false };
 
+const GOAL_FIELDS = { goalCall: true, goalEvtAtt: true, goalAemail: true } as const;
+
+/**
+ * Enregistre les objectifs d'une cible. Utilisée par le délégué (plan en création)
+ * et par le manager terrain (plan envoyé en validation, modification tracée dans l'historique).
+ */
 export async function saveTargetGoals(input: z.input<typeof goalsSchema>): Promise<SaveResult> {
   const parsed = goalsSchema.safeParse(input);
   if (!parsed.success) return { ok: false };
   const { targetId, ...goals } = parsed.data;
 
   try {
-    await requireEditableTarget(targetId);
-    await db.target.update({ where: { id: targetId }, data: goals });
-    return { ok: true };
+    const target = await requireEditableTarget(targetId);
+    return await db.$transaction(async (tx) => {
+      // Le plan ne doit pas avoir changé de statut entre la vérification et l'écriture.
+      if ((await lockPlan(tx, target.planId)) !== target.status) return { ok: false };
+      const before = await tx.target.findUniqueOrThrow({
+        where: { id: targetId },
+        select: GOAL_FIELDS,
+      });
+      await tx.target.update({ where: { id: targetId }, data: goals });
+      if (target.user.role === "FIELD_MANAGER") {
+        await recordManagerChange(tx, {
+          planId: target.planId,
+          actorId: target.user.id,
+          accountId: target.accountId,
+          name: target.name,
+          before,
+          after: goals,
+        });
+      }
+      return { ok: true } as const;
+    });
   } catch {
     return { ok: false };
   }
@@ -35,9 +59,22 @@ export async function saveTargetGoals(input: z.input<typeof goalsSchema>): Promi
 export async function removeTarget(targetId: string): Promise<SaveResult> {
   if (typeof targetId !== "string" || !targetId) return { ok: false };
   try {
-    await requireEditableTarget(targetId);
-    await db.target.delete({ where: { id: targetId } });
-    return { ok: true };
+    const target = await requireEditableTarget(targetId);
+    return await db.$transaction(async (tx) => {
+      if ((await lockPlan(tx, target.planId)) !== target.status) return { ok: false };
+      const removed = await tx.target.delete({ where: { id: targetId }, select: GOAL_FIELDS });
+      if (target.user.role === "FIELD_MANAGER") {
+        await recordManagerChange(tx, {
+          planId: target.planId,
+          actorId: target.user.id,
+          accountId: target.accountId,
+          name: target.name,
+          before: removed,
+          after: null,
+        });
+      }
+      return { ok: true } as const;
+    });
   } catch {
     return { ok: false };
   }

@@ -32,7 +32,9 @@ async function ReviewContent({
         planName={plan.name}
         ownerName={`${plan.owner.firstName} ${plan.owner.lastName}`}
         status={plan.status}
-        editable={false}
+        // Le manager peut ajuster le plan tant qu'il n'a pas rendu sa décision.
+        editable={plan.status === "IN_VALIDATION"}
+        mode="manager"
         initialTargets={targets}
         backHref="/manager"
         notice={<PlanNotice status={plan.status} history={history} audience="manager" />}

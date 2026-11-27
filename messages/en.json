@@ -167,7 +167,8 @@
     "validate": "Approve plan",
     "confirmValidate": "Confirm approval of this plan?",
     "needComment": "Tell the rep what needs to change.",
-    "failed": "Something went wrong. Reload the page: the plan may already have been handled."
+    "failed": "Something went wrong. Reload the page: the plan may already have been handled.",
+    "editHint": "You can adjust goals or remove targets before deciding: {name} will see your changes in the history."
   },
   "Workflow": {
     "history": "History",
@@ -194,7 +195,12 @@
       "readOnly": {
         "field": "This plan is read-only. Change requests will be available in a later step.",
         "manager": "This plan is read-only."
+      },
+      "edited": {
+        "field": "Your manager changed some goals: see the history for details.",
+        "manager": "Your changes are listed in the history."
       }
-    }
+    },
+    "removed": "removed from plan"
   }
 }

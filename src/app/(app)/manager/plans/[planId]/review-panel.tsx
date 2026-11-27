@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { usePlanFlush } from "@/app/(app)/field/plans/[planId]/plan-editor";
 import { reviewPlan } from "./actions";
 
 type Decision = "validate" | "return";
@@ -15,6 +16,7 @@ export function ReviewPanel({
   ownerFirstName: string;
 }) {
   const t = useTranslations("Review");
+  const flush = usePlanFlush();
   const [comment, setComment] = useState("");
   const [busy, setBusy] = useState<Decision | null>(null);
   const [error, setError] = useState<"failed" | "needComment" | null>(null);
@@ -26,6 +28,12 @@ export function ReviewPanel({
 
     setError(null);
     setBusy(decision);
+    // Les dernières modifications du manager doivent être enregistrées avant la décision.
+    if (!(await flush())) {
+      setError("failed");
+      setBusy(null);
+      return;
+    }
     const result = await reviewPlan({ planId, decision, comment }).catch(() => ({ ok: false }));
     // En cas de succès, la page est rechargée par le serveur avec le nouveau statut.
     if (!result.ok) {
@@ -38,6 +46,7 @@ export function ReviewPanel({
     <section className="rounded-2xl border border-indigo-500/30 bg-indigo-500/5 p-5">
       <h2 className="font-medium">{t("title")}</h2>
       <p className="mt-1 text-sm text-foreground/60">{t("intro", { name: ownerFirstName })}</p>
+      <p className="mt-1 text-sm text-foreground/60">{t("editHint", { name: ownerFirstName })}</p>
 
       <label htmlFor="review-comment" className="mt-4 block text-sm font-medium">
         {t("comment")}
