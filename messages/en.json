@@ -40,7 +40,8 @@
     "checkAndUpdate": "Check, and ask for an update",
     "prepareNext": "Prepare your next cycle plan",
     "statsOverview": "Stats and overview",
-    "targets": "{count, plural, =0 {no targets} one {# target} other {# targets}}"
+    "targets": "{count, plural, =0 {no targets} one {# target} other {# targets}}",
+    "viewPlan": "View the plan"
   },
   "Manager": {
     "title": "Your team's plans",
@@ -48,7 +49,10 @@
     "owner": "Field rep",
     "plan": "Plan",
     "status": "Status",
-    "targets": "Targets"
+    "targets": "Targets",
+    "toReview": "{count, plural, =0 {No plan is waiting for your approval.} one {# plan is waiting for your approval.} other {# plans are waiting for your approval.}}",
+    "review": "Review",
+    "view": "View"
   },
   "Plan": {
     "status": {
@@ -60,7 +64,7 @@
     }
   },
   "PlanEditor": {
-    "back": "Home",
+    "back": "Back",
     "readOnly": "This plan is active, so it is read-only. Change requests will come in a later step.",
     "empty": "No targets in this plan.",
     "brick": "Brick {code}",
@@ -141,5 +145,56 @@
     "empty": "No HCP matches these filters.",
     "emptyAll": "All these accounts in your territory are already in the plan.",
     "error": "Something went wrong. Reload the page and try again."
+  },
+  "Submit": {
+    "button": "Send to manager",
+    "title": "Send the plan for approval?",
+    "intro": "Your manager will be asked to approve it. The plan will be locked unless they send it back to you.",
+    "comment": "Message to your manager (optional)",
+    "commentPlaceholder": "E.g. I increased brick 25BES following the launch of product B.",
+    "cancel": "Cancel",
+    "confirm": "Send",
+    "sending": "Sending…",
+    "needTargets": "Add at least one target before sending the plan.",
+    "failed": "Sending failed. Reload the page and try again."
+  },
+  "Review": {
+    "title": "Your decision",
+    "intro": "Approve this plan, or send it back to {name} with a comment so it can be reworked.",
+    "comment": "Comment",
+    "commentPlaceholder": "Required to send back, optional to approve.",
+    "return": "Send back",
+    "validate": "Approve plan",
+    "confirmValidate": "Confirm approval of this plan?",
+    "needComment": "Tell the rep what needs to change.",
+    "failed": "Something went wrong. Reload the page: the plan may already have been handled."
+  },
+  "Workflow": {
+    "history": "History",
+    "action": {
+      "CREATED": "Plan created",
+      "SUBMITTED": "Sent for approval",
+      "VALIDATED": "Approved",
+      "RETURNED": "Sent back to rep",
+      "UPDATED_BY_MANAGER": "Edited by manager"
+    },
+    "notice": {
+      "submitted": {
+        "field": "Plan sent on {date}. It is waiting for your manager's decision and can no longer be edited.",
+        "manager": "{name} sent you this plan on {date}."
+      },
+      "returned": {
+        "field": "{name} sent this plan back to you on {date}. Update it, then send it again.",
+        "manager": "You sent this plan back on {date}. The rep is reworking it."
+      },
+      "validated": {
+        "field": "🎉 Plan approved by {name} on {date}.",
+        "manager": "You approved this plan on {date}."
+      },
+      "readOnly": {
+        "field": "This plan is read-only. Change requests will be available in a later step.",
+        "manager": "This plan is read-only."
+      }
+    }
   }
 }

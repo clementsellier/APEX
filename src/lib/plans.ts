@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireRole } from "@/lib/dal";
 import type { PlanStatus } from "@/generated/prisma/enums";
+import type { EditorTarget } from "@/app/(app)/field/plans/[planId]/plan-editor";
 
 // Statuts dans lesquels le délégué peut modifier son plan directement.
 // Le plan en cours (ACTIVE) passera par une demande de modification validée par le manager.
@@ -12,45 +13,62 @@ export function isEditable(status: PlanStatus) {
   return EDITABLE_STATUSES.includes(status);
 }
 
-/** Plan du délégué connecté avec ses cibles, triées par brick puis par nom. 404 si ce n'est pas le sien. */
-export async function getOwnPlanForEditor(planId: string) {
-  const user = await requireRole("FIELD_USER");
-
-  const plan = await db.plan.findFirst({
-    where: { id: planId, ownerId: user.id },
+// Champs du plan affichés dans l'éditeur (délégué) et l'écran de revue (manager).
+const PLAN_VIEW_SELECT = {
+  id: true,
+  name: true,
+  status: true,
+  owner: { select: { firstName: true, lastName: true } },
+  cycle: { select: { code: true, startDate: true, endDate: true } },
+  targets: {
     select: {
       id: true,
-      name: true,
-      status: true,
-      cycle: { select: { code: true, startDate: true, endDate: true } },
-      targets: {
+      goalCall: true,
+      goalEvtAtt: true,
+      goalAemail: true,
+      account: {
         select: {
           id: true,
-          goalCall: true,
-          goalEvtAtt: true,
-          goalAemail: true,
-          account: {
-            select: {
-              id: true,
-              name: true,
-              type: true,
-              specialty: true,
-              workplace: true,
-              brickCode: true,
-            },
-          },
+          name: true,
+          type: true,
+          specialty: true,
+          workplace: true,
+          brickCode: true,
         },
       },
     },
-  });
-  if (!plan) notFound();
+  },
+} as const;
 
+type PlanView = NonNullable<Awaited<ReturnType<typeof findPlanView>>>;
+
+function findPlanView(where: { id: string; ownerId?: string; owner?: { managerId: string } }) {
+  return db.plan.findFirst({ where, select: PLAN_VIEW_SELECT });
+}
+
+function sortTargets(plan: PlanView) {
   plan.targets.sort(
     (a, b) =>
       (a.account.brickCode ?? "").localeCompare(b.account.brickCode ?? "") ||
       a.account.name.localeCompare(b.account.name),
   );
   return plan;
+}
+
+/** Plan du délégué connecté avec ses cibles, triées par brick puis par nom. 404 si ce n'est pas le sien. */
+export async function getOwnPlanForEditor(planId: string) {
+  const user = await requireRole("FIELD_USER");
+  const plan = await findPlanView({ id: planId, ownerId: user.id });
+  if (!plan) notFound();
+  return sortTargets(plan);
+}
+
+/** Plan d'un délégué de l'équipe du manager connecté. 404 si le délégué n'est pas dans son équipe. */
+export async function getTeamPlanForReview(planId: string) {
+  const user = await requireRole("FIELD_MANAGER");
+  const plan = await findPlanView({ id: planId, owner: { managerId: user.id } });
+  if (!plan) notFound();
+  return sortTargets(plan);
 }
 
 /**
@@ -196,4 +214,19 @@ export async function getAddTargetData(planId: string) {
 
 function endOfDay(date: Date) {
   return new Date(date.getTime() + 24 * 60 * 60 * 1000 - 1);
+}
+
+/** Cibles du plan au format attendu par l'éditeur (composant client). */
+export function toEditorTargets(plan: PlanView): EditorTarget[] {
+  return plan.targets.map((t) => ({
+    id: t.id,
+    name: t.account.name,
+    type: t.account.type,
+    specialty: t.account.specialty,
+    workplace: t.account.workplace,
+    brick: t.account.brickCode ?? "—",
+    goalCall: t.goalCall,
+    goalEvtAtt: t.goalEvtAtt,
+    goalAemail: t.goalAemail,
+  }));
 }

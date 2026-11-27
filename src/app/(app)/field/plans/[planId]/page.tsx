@@ -1,8 +1,10 @@
 import { Suspense } from "react";
-import { getOwnPlanForEditor, isEditable } from "@/lib/plans";
-import { PlanEditor, type EditorTarget } from "./plan-editor";
+import { PlanHistory, PlanNotice } from "@/components/plan-status";
+import { getOwnPlanForEditor, isEditable, toEditorTargets } from "@/lib/plans";
+import { getPlanHistory } from "@/lib/plan-workflow";
+import { PlanEditor } from "./plan-editor";
 
-// Écran « update plan » du délégué (maquette slide 14).
+// Écran « update plan » du délégué (maquette slide 14) et envoi en validation.
 export default function PlanPage({ params }: PageProps<"/field/plans/[planId]">) {
   return (
     <Suspense>
@@ -18,29 +20,23 @@ async function PlanPageContent({
 }) {
   const { planId } = await params;
   const plan = await getOwnPlanForEditor(planId);
-
-  const targets: EditorTarget[] = plan.targets.map((t) => ({
-    id: t.id,
-    name: t.account.name,
-    type: t.account.type,
-    specialty: t.account.specialty,
-    workplace: t.account.workplace,
-    brick: t.account.brickCode ?? "—",
-    goalCall: t.goalCall,
-    goalEvtAtt: t.goalEvtAtt,
-    goalAemail: t.goalAemail,
-  }));
+  const history = await getPlanHistory(plan.id);
+  const targets = toEditorTargets(plan);
 
   return (
-    <PlanEditor
-      // L'éditeur garde ses cibles dans un état local : on le recrée quand la liste change
-      // côté serveur (cibles ajoutées depuis l'écran d'ajout), sinon il afficherait l'ancienne.
-      key={targets.map((t) => t.id).join()}
-      planId={plan.id}
-      planName={plan.name}
-      status={plan.status}
-      editable={isEditable(plan.status)}
-      initialTargets={targets}
-    />
+    <div className="flex flex-col gap-10">
+      <PlanEditor
+        // L'éditeur garde ses cibles dans un état local : on le recrée quand la liste change
+        // côté serveur (cibles ajoutées depuis l'écran d'ajout), sinon il afficherait l'ancienne.
+        key={targets.map((t) => t.id).join()}
+        planId={plan.id}
+        planName={plan.name}
+        status={plan.status}
+        editable={isEditable(plan.status)}
+        initialTargets={targets}
+        notice={<PlanNotice status={plan.status} history={history} audience="field" />}
+      />
+      <PlanHistory history={history} />
+    </div>
   );
 }
