@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { LocaleSwitcher } from "@/components/locale-switcher";
+import { ThemeSwitcher } from "@/components/theme-switcher";
+import { getTheme } from "@/lib/theme-server";
 import { getCurrentUser } from "@/lib/dal";
 import { logout } from "./actions";
 
@@ -25,7 +27,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
 }
 
 async function UserMenu() {
-  const [user, t] = await Promise.all([getCurrentUser(), getTranslations()]);
+  const [user, t, theme] = await Promise.all([getCurrentUser(), getTranslations(), getTheme()]);
 
   return (
     <>
@@ -33,6 +35,7 @@ async function UserMenu() {
         <div className="font-medium">{user.name}</div>
         <div className="text-foreground/60">{t(`Roles.${user.role}`)}</div>
       </div>
+      <ThemeSwitcher initial={theme} />
       <LocaleSwitcher />
       <form action={logout}>
         <button

@@ -58,5 +58,40 @@
       "ACTIVE": "En cours",
       "COMPLETED": "Terminé"
     }
+  },
+  "PlanEditor": {
+    "back": "Accueil",
+    "readOnly": "Ce plan est en cours : il est en lecture seule. Les demandes de modification seront possibles dans une prochaine étape.",
+    "empty": "Aucune cible dans ce plan.",
+    "brick": "Brick {code}",
+    "remove": "Retirer du plan",
+    "confirmRemove": "Retirer {name} du plan ?",
+    "addTarget": "Ajouter une cible",
+    "total": {
+      "goalCall": "Visites",
+      "goalEvtAtt": "Participations événements",
+      "goalAemail": "E-mails approuvés"
+    },
+    "short": {
+      "goalCall": "Visites",
+      "goalEvtAtt": "Évts",
+      "goalAemail": "E-mails"
+    },
+    "col": {
+      "name": "Nom",
+      "specialty": "Spécialité",
+      "place": "Lieu"
+    },
+    "save": {
+      "saving": "Enregistrement…",
+      "saved": "Enregistré",
+      "error": "Échec de l'enregistrement — rechargez la page"
+    }
+  },
+  "Theme": {
+    "label": "Thème",
+    "light": "Clair",
+    "system": "Système",
+    "dark": "Sombre"
   }
 }

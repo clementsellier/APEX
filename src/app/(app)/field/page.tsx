@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { requireRole } from "@/lib/dal";
 import { db } from "@/lib/db";
@@ -38,14 +39,20 @@ async function FieldHomeContent() {
           intro={t("Field.currentPlan")}
           empty={t("Field.noCurrentPlan")}
           plan={current}
-          actions={[t("Field.checkAndUpdate"), t("Field.statsOverview")]}
+          actions={[
+            { label: t("Field.checkAndUpdate"), open: true },
+            { label: t("Field.statsOverview") },
+          ]}
           accent="from-indigo-500 to-sky-500"
         />
         <PlanCard
           intro={t("Field.nextPlan")}
           empty={t("Field.noNextPlan")}
           plan={next}
-          actions={[t("Field.prepareNext"), t("Field.statsOverview")]}
+          actions={[
+            { label: t("Field.prepareNext"), open: true },
+            { label: t("Field.statsOverview") },
+          ]}
           accent="from-fuchsia-500 to-orange-400"
         />
       </div>
@@ -62,8 +69,8 @@ async function PlanCard({
 }: {
   intro: string;
   empty: string;
-  plan?: { name: string; status: string; _count: { targets: number } };
-  actions: string[];
+  plan?: { id: string; name: string; status: string; _count: { targets: number } };
+  actions: { label: string; open?: boolean }[];
   accent: string;
 }) {
   const t = await getTranslations();
@@ -80,13 +87,22 @@ async function PlanCard({
             {t("Field.targets", { count: plan._count.targets })}
           </p>
           <ul className="mt-6 flex flex-col gap-2">
-            {actions.map((label) => (
-              <li
-                key={label}
-                className="flex items-center justify-between rounded-lg bg-foreground/5 px-4 py-3 text-sm"
-              >
-                <span>› {label}</span>
-                <span className="text-xs text-foreground/50">{t("Home.soon")}</span>
+            {actions.map(({ label, open }) => (
+              <li key={label}>
+                {open ? (
+                  <Link
+                    href={`/field/plans/${plan.id}`}
+                    className="flex items-center justify-between rounded-lg bg-foreground/5 px-4 py-3 text-sm transition hover:bg-foreground/10"
+                  >
+                    <span>› {label}</span>
+                    <span aria-hidden>→</span>
+                  </Link>
+                ) : (
+                  <div className="flex items-center justify-between rounded-lg bg-foreground/5 px-4 py-3 text-sm">
+                    <span>› {label}</span>
+                    <span className="text-xs text-foreground/50">{t("Home.soon")}</span>
+                  </div>
+                )}
               </li>
             ))}
           </ul>

@@ -58,5 +58,40 @@
       "ACTIVE": "Active",
       "COMPLETED": "Completed"
     }
+  },
+  "PlanEditor": {
+    "back": "Home",
+    "readOnly": "This plan is active, so it is read-only. Change requests will come in a later step.",
+    "empty": "No targets in this plan.",
+    "brick": "Brick {code}",
+    "remove": "Remove from plan",
+    "confirmRemove": "Remove {name} from the plan?",
+    "addTarget": "Add a target",
+    "total": {
+      "goalCall": "Calls",
+      "goalEvtAtt": "Event attendances",
+      "goalAemail": "Approved emails"
+    },
+    "short": {
+      "goalCall": "Calls",
+      "goalEvtAtt": "Events",
+      "goalAemail": "Emails"
+    },
+    "col": {
+      "name": "Name",
+      "specialty": "Specialty",
+      "place": "Place"
+    },
+    "save": {
+      "saving": "Saving…",
+      "saved": "Saved",
+      "error": "Save failed — reload the page"
+    }
+  },
+  "Theme": {
+    "label": "Theme",
+    "light": "Light",
+    "system": "System",
+    "dark": "Dark"
   }
 }
