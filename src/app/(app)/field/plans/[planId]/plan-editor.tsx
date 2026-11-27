@@ -5,6 +5,7 @@ import { createContext, useContext, useMemo, useRef, useState, type ReactNode } 
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { AnimatedNumber } from "@/components/animated-number";
+import { QualifCell, qualifColumns, type Qualif } from "@/components/qualif";
 import type { PlanStatus } from "@/generated/prisma/enums";
 import { removeTarget, saveTargetGoals, submitPlan } from "./actions";
 
@@ -18,6 +19,7 @@ export type EditorTarget = {
   goalCall: number;
   goalEvtAtt: number;
   goalAemail: number;
+  qualifs: Qualif[];
 };
 
 type GoalKey = "goalCall" | "goalEvtAtt" | "goalAemail";
@@ -84,6 +86,8 @@ export function PlanEditor({
   const pending = useRef(0);
 
   const totals = useMemo(() => sumGoals(targets), [targets]);
+  // Une colonne par qualification présente dans le plan (Potentiel, HTA…).
+  const qualifLabels = useMemo(() => qualifColumns(targets), [targets]);
   const groups = useMemo(() => {
     const byBrick = new Map<string, EditorTarget[]>();
     for (const target of targets) {
@@ -242,12 +246,20 @@ export function PlanEditor({
             </header>
 
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[640px] text-left text-sm">
+              <table
+                className="w-full text-left text-sm"
+                style={{ minWidth: 640 + qualifLabels.length * 110 }}
+              >
                 <thead className="text-foreground/60">
                   <tr>
                     <th className="px-4 py-2 font-medium">{t("PlanEditor.col.name")}</th>
                     <th className="px-4 py-2 font-medium">{t("PlanEditor.col.specialty")}</th>
                     <th className="px-4 py-2 font-medium">{t("PlanEditor.col.place")}</th>
+                    {qualifLabels.map((label) => (
+                      <th key={label} className="px-3 py-2 font-medium whitespace-nowrap">
+                        {label}
+                      </th>
+                    ))}
                     {GOALS.map((key) => (
                       <th key={key} className="px-2 py-2 text-center font-medium">
                         {t(`PlanEditor.short.${key}`)}
@@ -271,6 +283,11 @@ export function PlanEditor({
                         <td className="px-4 py-2 font-medium">{target.name}</td>
                         <td className="px-4 py-2 text-foreground/70">{target.specialty ?? "—"}</td>
                         <td className="px-4 py-2 text-foreground/70">{target.workplace ?? "—"}</td>
+                        {qualifLabels.map((label) => (
+                          <td key={label} className="px-3 py-2">
+                            <QualifCell qualifs={target.qualifs} label={label} />
+                          </td>
+                        ))}
                         {GOALS.map((key) => (
                           <td key={key} className="px-2 py-2">
                             {editable ? (
