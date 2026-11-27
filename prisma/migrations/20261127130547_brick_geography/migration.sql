@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Brick" ADD COLUMN     "department" TEXT,
+ADD COLUMN     "shape" JSONB,
+ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ALTER COLUMN "territory" DROP NOT NULL;

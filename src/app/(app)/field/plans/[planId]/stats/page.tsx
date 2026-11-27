@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { getFormatter, getTranslations } from "next-intl/server";
 import { getPlanStats, type BrickStats } from "@/lib/plan-stats";
+import { PlanTabs } from "../plan-tabs";
 import { ShareChart } from "./share-chart";
 
 // Analyse d'un plan (maquette slide 16) : activité prévue vs performance du marché
@@ -85,6 +86,8 @@ async function PlanStatsContent({
           {t("Stats.comparedTo", { label: actualLabel })}
         </p>
       </div>
+
+      <PlanTabs planId={plan.id} active="stats" />
 
       <section className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {tiles.map((tile, i) => (

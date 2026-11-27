@@ -32,6 +32,6 @@ export default auth((req) => {
 export const config = {
   // Tout sauf les routes Auth.js, les fichiers statiques et les images.
   matcher: [
-    "/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.(?:png|jpg|jpeg|svg|webp|ico)$).*)",
+    "/((?!api/auth|_next/static|_next/image|favicon.ico|vendor/|.*\\.(?:png|jpg|jpeg|svg|webp|ico)$).*)",
   ],
 };

@@ -3,7 +3,9 @@
 import "dotenv/config";
 import bcrypt from "bcryptjs";
 import { PrismaPg } from "@prisma/adapter-pg";
+import { existsSync, readFileSync } from "node:fs";
 import { PrismaClient, type ActivityType } from "../src/generated/prisma/client";
+import { applyUgaImport, parseUgaExcel, parseUgaGeoJson } from "../src/lib/uga/import";
 
 const db = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
@@ -78,7 +80,7 @@ async function main() {
       firstName: "Arnaud",
       lastName: "DURAND",
       role: "FIELD_USER",
-      primaryTerritory: "Sect104",
+      primaryTerritory: "S105",
       managerId: fieldManager.id,
       crmId: "CRM-U-104",
     },
@@ -91,7 +93,7 @@ async function main() {
       lastName: "LEROY",
       locale: "en",
       role: "FIELD_USER",
-      primaryTerritory: "Sect105",
+      primaryTerritory: "S104",
       managerId: fieldManager.id,
     },
   });
@@ -117,14 +119,33 @@ async function main() {
   });
 
   // ─── Géographie et KPI ───
-  await db.brick.createMany({
-    data: [
-      { code: "25BES", territory: "Sect104" },
-      { code: "25LON", territory: "Sect104" },
-      { code: "39DOL", territory: "Sect104" },
-      { code: "70VES", territory: "Sect105" },
-    ],
-  });
+  // Référentiel UGA IQVIA : chargé depuis prisma/data/ s'il est présent (données sous licence,
+  // non versionnées). Sinon, seules les UGA de la démo sont créées, sans contour.
+  const geoFile = "prisma/data/uga.geojson";
+  const listFile = "prisma/data/uga.xlsx";
+  if (existsSync(geoFile) && existsSync(listFile)) {
+    const shapes = parseUgaGeoJson(readFileSync(geoFile, "utf8"));
+    const buffer = readFileSync(listFile);
+    const rows = await parseUgaExcel(
+      buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength) as ArrayBuffer,
+    );
+    const count = await applyUgaImport(db, { rows, shapes });
+    console.log(`Référentiel UGA importé : ${count} UGA`);
+  } else {
+    console.log("prisma/data/uga.geojson ou uga.xlsx absent : UGA de démo sans contour");
+  }
+  for (const [code, territory] of [
+    ["25BES", "S105"],
+    ["25MON", "S105"],
+    ["25PON", "S105"],
+    ["06NC1", "S104"],
+  ]) {
+    await db.brick.upsert({
+      where: { code },
+      create: { code, territory, department: code.slice(0, 2) },
+      update: {},
+    });
+  }
   await db.kpiDefinition.createMany({
     data: [
       { key: "kpi1", label: "Ventes produit A", unit: "€" },
@@ -137,12 +158,12 @@ async function main() {
       { brickCode: "25BES", kpiKey: "kpi1", value: 182000 },
       { brickCode: "25BES", kpiKey: "kpi2", value: 23.5 },
       { brickCode: "25BES", kpiKey: "kpi3", value: 4.2 },
-      { brickCode: "25LON", kpiKey: "kpi1", value: 96000 },
-      { brickCode: "25LON", kpiKey: "kpi2", value: 17.8 },
-      { brickCode: "25LON", kpiKey: "kpi3", value: -1.5 },
-      { brickCode: "39DOL", kpiKey: "kpi1", value: 71000 },
-      { brickCode: "39DOL", kpiKey: "kpi2", value: 19.1 },
-      { brickCode: "39DOL", kpiKey: "kpi3", value: 2.0 },
+      { brickCode: "25MON", kpiKey: "kpi1", value: 96000 },
+      { brickCode: "25MON", kpiKey: "kpi2", value: 17.8 },
+      { brickCode: "25MON", kpiKey: "kpi3", value: -1.5 },
+      { brickCode: "25PON", kpiKey: "kpi1", value: 71000 },
+      { brickCode: "25PON", kpiKey: "kpi2", value: 19.1 },
+      { brickCode: "25PON", kpiKey: "kpi3", value: 2.0 },
     ],
   });
 
@@ -235,10 +256,10 @@ async function main() {
       last: "TROUBLOU",
       spe: "Cardiologue",
       place: "Cabinet TROUBLOU",
-      city: "Lons-le-Saunier",
-      brick: "25LON",
-      lat: 46.6744,
-      lng: 5.555,
+      city: "Montbéliard",
+      brick: "25MON",
+      lat: 47.5097,
+      lng: 6.7983,
       qualifs: [P2],
     },
     {
@@ -247,10 +268,10 @@ async function main() {
       last: "THINH",
       spe: "Néphrologue",
       place: "Clinique 3 Soleils",
-      city: "Lons-le-Saunier",
-      brick: "25LON",
-      lat: 46.676,
-      lng: 5.558,
+      city: "Montbéliard",
+      brick: "25MON",
+      lat: 47.5112,
+      lng: 6.7951,
       qualifs: [P1],
     },
     {
@@ -259,10 +280,10 @@ async function main() {
       last: "RITCHIE",
       spe: "Médecin généraliste",
       place: "Clinique 3 Soleils",
-      city: "Lons-le-Saunier",
-      brick: "25LON",
-      lat: 46.6761,
-      lng: 5.5582,
+      city: "Montbéliard",
+      brick: "25MON",
+      lat: 47.5081,
+      lng: 6.8012,
     },
     {
       title: "Dr",
@@ -270,10 +291,10 @@ async function main() {
       last: "PERRIN",
       spe: "Cardiologue",
       place: "Cabinet Perrin",
-      city: "Dole",
-      brick: "39DOL",
-      lat: 47.092,
-      lng: 5.489,
+      city: "Pontarlier",
+      brick: "25PON",
+      lat: 46.9047,
+      lng: 6.3547,
       qualifs: [P2],
     },
     {
@@ -289,10 +310,10 @@ async function main() {
       type: "PHARMACY",
       name: "Pharmacie des Cordeliers",
       place: "Pharmacie des Cordeliers",
-      city: "Lons-le-Saunier",
-      brick: "25LON",
-      lat: 46.673,
-      lng: 5.554,
+      city: "Montbéliard",
+      brick: "25MON",
+      lat: 47.5104,
+      lng: 6.8031,
     },
   ];
 
@@ -336,8 +357,8 @@ async function main() {
   ];
   const current = await db.plan.create({
     data: {
-      name: "26C1-FRONCO-Sect104",
-      territory: "Sect104",
+      name: "26C1-FRONCO-S105",
+      territory: "S105",
       status: "ACTIVE",
       ownerId: arnaud.id,
       cycleId: c1.id,
@@ -358,8 +379,8 @@ async function main() {
   });
   await db.plan.create({
     data: {
-      name: "26C2-FRONCO-Sect104",
-      territory: "Sect104",
+      name: "26C2-FRONCO-S105",
+      territory: "S105",
       status: "IN_CREATION",
       ownerId: arnaud.id,
       cycleId: c2.id,
@@ -381,8 +402,8 @@ async function main() {
   // ─── Plan d'Emma (secteur 105), envoyé en validation : à examiner par le manager ───
   const emmaAccounts = await Promise.all(
     [
-      ["Dr Claire FAIVRE", "Claire", "FAIVRE", "Cardiologue", "CH Vesoul"],
-      ["Dr Nicolas GIRARDOT", "Nicolas", "GIRARDOT", "Néphrologue", "CH Vesoul"],
+      ["Dr Claire FAIVRE", "Claire", "FAIVRE", "Cardiologue", "CHU de Nice"],
+      ["Dr Nicolas GIRARDOT", "Nicolas", "GIRARDOT", "Néphrologue", "CHU de Nice"],
       ["Dr Inès MOREL", "Inès", "MOREL", "Médecin généraliste", "Cabinet Morel"],
     ].map(([name, first, last, spe, place], i) =>
       db.account.create({
@@ -395,9 +416,9 @@ async function main() {
           name,
           specialty: spe,
           workplace: place,
-          brickCode: "70VES",
+          brickCode: "06NC1",
           addresses: {
-            create: { line1: place, city: "Vesoul", latitude: 47.62, longitude: 6.155 },
+            create: { line1: place, city: "Nice", latitude: 43.7102, longitude: 7.262 },
           },
         },
       }),
@@ -405,8 +426,8 @@ async function main() {
   );
   await db.plan.create({
     data: {
-      name: "26C2-FRONCO-Sect105",
-      territory: "Sect105",
+      name: "26C2-FRONCO-S104",
+      territory: "S104",
       status: "IN_VALIDATION",
       ownerId: emma.id,
       cycleId: c2.id,
@@ -424,7 +445,7 @@ async function main() {
           {
             actorId: emma.id,
             action: "SUBMITTED",
-            comment: "Focus sur le CH de Vesoul pour le lancement du produit B.",
+            comment: "Focus sur le CHU de Nice pour le lancement du produit B.",
             createdAt: new Date("2026-11-24T16:30:00Z"),
           },
         ],

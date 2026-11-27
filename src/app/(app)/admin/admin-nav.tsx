@@ -8,6 +8,7 @@ const LINKS = [
   { href: "/admin", key: "home" },
   { href: "/admin/users", key: "users" },
   { href: "/admin/cycles", key: "cycles" },
+  { href: "/admin/map", key: "map" },
 ] as const;
 
 /** Onglets du back-office. */

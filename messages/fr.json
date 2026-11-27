@@ -257,6 +257,10 @@
       "evolution": "Indice évol.",
       "accounts": "PDS vus",
       "perAccount": "Int. / PDS"
+    },
+    "tabs": {
+      "stats": "Tableau de bord",
+      "map": "Carte"
     }
   },
   "Admin": {
@@ -264,7 +268,8 @@
       "label": "Back-office",
       "home": "Accueil",
       "users": "Utilisateurs",
-      "cycles": "Cycles"
+      "cycles": "Cycles",
+      "map": "Carte"
     },
     "status": {
       "ACTIVE": "Actif",
@@ -313,7 +318,7 @@
       },
       "hint": {
         "team": "Ex. FRONCO",
-        "territory": "Ex. Sect104 — obligatoire pour un délégué"
+        "territory": "Ex. S105 — obligatoire pour un délégué"
       },
       "chooseManager": "Choisir…",
       "selfLocked": "Vous ne pouvez pas modifier votre propre rôle ni votre statut.",
@@ -399,6 +404,116 @@
         "hasPlans": "Impossible : des plans sont rattachés à ce cycle.",
         "failed": "L'enregistrement a échoué. Réessayez."
       }
+    },
+    "map": {
+      "title": "Carte des zones",
+      "intro": "Sectorisation des UGA IQVIA : chaque UGA est rattachée à un secteur, lui-même attribué à un délégué.",
+      "empty": "Aucun contour d'UGA importé : chargez le fichier GeoJSON IQVIA ci-dessous.",
+      "withoutShape": "{count} UGA sur {total} n'ont pas de contour.",
+      "aria": "Carte des UGA et des secteurs",
+      "legend": {
+        "assigned": "UGA sectorisée",
+        "unassigned": "Non sectorisée",
+        "sector": "Secteur {code}",
+        "otherSector": "Autre secteur",
+        "target": "Rattachée à {code}",
+        "border": "Limite de secteur"
+      },
+      "department": "Dépt {code}",
+      "inSector": "secteur {code}",
+      "accounts": "{count, plural, =0 {aucun PDS} one {# PDS} other {# PDS}}",
+      "clickToAssign": "Cliquer pour rattacher à {code}",
+      "clickToRemove": "Cliquer pour retirer du secteur",
+      "coverage": "{assigned} UGA sectorisées sur {total} · {sectors} secteurs",
+      "sectors": "Secteurs",
+      "allFrance": "Toute la France",
+      "zonesCount": "{count} UGA",
+      "noRep": "Aucun délégué",
+      "edit": {
+        "start": "Modifier la sectorisation",
+        "title": "Modification",
+        "sector": "Secteur à compléter (existant ou nouveau)",
+        "hint": "Cliquez sur une UGA pour la rattacher à ce secteur ; cliquez à nouveau pour la retirer. Les limites de secteur sont recalculées à l'enregistrement.",
+        "pending": "{count, plural, =0 {Aucune modification} one {# UGA modifiée} other {# UGA modifiées}}",
+        "save": "Enregistrer ({count})",
+        "cancel": "Annuler",
+        "failed": "L'enregistrement a échoué."
+      },
+      "import": {
+        "title": "Importer le référentiel",
+        "intro": "Contours (GeoJSON IQVIA) et/ou liste des UGA avec leur secteur (Excel). Analysez d'abord : rien n'est modifié avant de cliquer sur « Importer ».",
+        "geo": "Contours des UGA",
+        "geoHint": "GeoJSON avec une propriété « UGA » par zone",
+        "list": "Liste des UGA",
+        "listHint": "Excel avec les colonnes UGA, Département, SECTEUR",
+        "analyze": "Analyser",
+        "analyzing": "Analyse…",
+        "apply": "Importer",
+        "importing": "Import…",
+        "preview": "Aperçu de l'import",
+        "applied": "Import terminé : {count} UGA mises à jour.",
+        "total": "{count} UGA au total après import",
+        "shapes": "{count} contours (simplifiés pour l'affichage)",
+        "created": "{count, plural, =0 {aucune nouvelle UGA} one {# nouvelle UGA} other {# nouvelles UGA}}",
+        "moved": "{count, plural, =0 {aucun changement de secteur} one {# UGA change de secteur} other {# UGA changent de secteur}}",
+        "withoutShape": "{count} UGA de la liste sans contour : {codes}…",
+        "sectors": "Secteurs :",
+        "movedWithPlans": "Ces UGA changent de secteur alors que des plans y ciblent des PDS : {codes}",
+        "errors": {
+          "noFile": "Choisissez au moins un fichier.",
+          "geoInvalid": "Le fichier de contours n'est pas un GeoJSON valide.",
+          "geoNoCode": "Aucune zone du GeoJSON n'a de propriété « UGA ».",
+          "excelInvalid": "Le fichier Excel est illisible.",
+          "excelNoColumns": "Colonne « UGA » introuvable dans le premier onglet.",
+          "failed": "L'import a échoué."
+        }
+      }
     }
+  },
+  "Map": {
+    "sector": "secteur {code}",
+    "noShapes": "Les contours des UGA de ce secteur ne sont pas encore importés. L'administrateur peut les charger depuis le back-office (onglet Carte).",
+    "withoutShape": "UGA sans contour : {codes}",
+    "indicator": "Indicateur",
+    "indicators": {
+      "gap": "Écart plan / marché",
+      "market": "Poids marché",
+      "evolution": "Évolution",
+      "interactions": "Activité prévue"
+    },
+    "hints": {
+      "gap": "Bleu : part du plan supérieure au poids marché · rouge : inférieure.",
+      "market": "Poids de chaque UGA dans les ventes du secteur.",
+      "evolution": "Indice d'évolution des ventes vs N-1 (base 100).",
+      "interactions": "Nombre d'interactions prévues par le plan."
+    },
+    "legend": "Légende",
+    "targetPoint": "Cible du plan",
+    "aria": "Carte des UGA du secteur",
+    "metric": {
+      "planShare": "Part du plan",
+      "market": "Poids marché",
+      "gap": "Écart",
+      "evolution": "Indice d'évolution",
+      "targets": "Cibles",
+      "interactions": "Interactions prévues"
+    },
+    "noActivity": "Aucune activité prévue ni donnée marché.",
+    "close": "Fermer",
+    "targetsIn": "{count, plural, =0 {Aucune cible} one {# cible} other {# cibles}} dans cette UGA",
+    "goals": "{call} vis. · {evtAtt} évt · {aemail} mail",
+    "noTargetsHere": "Pensez à l'écran d'ajout de cibles pour couvrir cette UGA.",
+    "panelTitle": "Votre secteur",
+    "panelHint": "Survolez une UGA pour voir ses chiffres, cliquez dessus pour la liste de ses cibles.",
+    "summary": "{zones} UGA · {targets} cibles, dont {located} géolocalisées",
+    "showAll": "Voir tout le secteur",
+    "showFocus": "Recentrer sur mes cibles"
+  },
+  "MapControls": {
+    "zoomIn": "Zoomer",
+    "zoomOut": "Dézoomer",
+    "ctrlScroll": "Ctrl + molette pour zoomer sur la carte",
+    "cmdScroll": "⌘ + molette pour zoomer sur la carte",
+    "twoFingers": "Utilisez deux doigts pour déplacer la carte"
   }
 }
