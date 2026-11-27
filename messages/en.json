@@ -93,5 +93,53 @@
     "light": "Light",
     "system": "System",
     "dark": "Dark"
+  },
+  "AddTarget": {
+    "back": "Back to plan",
+    "title": "Add targets",
+    "done": "Done",
+    "search": "Search a name or a place…",
+    "kind": {
+      "HCP": "Healthcare professionals",
+      "PHARMACY": "Pharmacies"
+    },
+    "filter": {
+      "specialty": "Specialty",
+      "allSpecialties": "All specialties",
+      "brick": "Brick",
+      "allBricks": "All bricks",
+      "call": "Call in {cycle}",
+      "evt": "Event in {cycle}",
+      "all": "All",
+      "with": "With",
+      "without": "Without",
+      "reset": "Reset"
+    },
+    "results": "{count, plural, =0 {No results} one {# result} other {# results}}",
+    "col": {
+      "brick": "Brick",
+      "name": "Name",
+      "specialty": "Specialty",
+      "place": "Place",
+      "qualifs": "Qualifications",
+      "lastCycle": "{cycle} activity",
+      "lastCall": "Last call"
+    },
+    "short": {
+      "call": "Call",
+      "evtAtt": "Evt",
+      "aemail": "Mail"
+    },
+    "activity": {
+      "call": "Calls in the previous cycle",
+      "evtAtt": "Event attendances in the previous cycle",
+      "aemail": "Approved e-mails in the previous cycle"
+    },
+    "add": "Add",
+    "added": "Added",
+    "undo": "Undo",
+    "empty": "No HCP matches these filters.",
+    "emptyAll": "All these accounts in your territory are already in the plan.",
+    "error": "Something went wrong. Reload the page and try again."
   }
 }

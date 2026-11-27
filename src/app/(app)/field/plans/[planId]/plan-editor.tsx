@@ -28,11 +28,13 @@ const SAVE_DELAY_MS = 600;
 type SaveState = "idle" | "saving" | "saved" | "error";
 
 export function PlanEditor({
+  planId,
   planName,
   status,
   editable,
   initialTargets,
 }: {
+  planId: string;
   planName: string;
   status: PlanStatus;
   editable: boolean;
@@ -223,12 +225,12 @@ export function PlanEditor({
 
       {editable && (
         <div className="flex justify-center">
-          <span
-            title={t("Home.soon")}
-            className="rounded-full border border-dashed border-black/20 px-5 py-2.5 text-sm text-foreground/50 dark:border-white/20"
+          <Link
+            href={`/field/plans/${planId}/add`}
+            className="rounded-full border border-dashed border-black/25 px-5 py-2.5 text-sm font-medium text-foreground/70 transition hover:border-solid hover:border-foreground hover:bg-foreground hover:text-background dark:border-white/25"
           >
-            + {t("PlanEditor.addTarget")} · {t("Home.soon")}
-          </span>
+            + {t("PlanEditor.addTarget")}
+          </Link>
         </div>
       )}
     </div>
