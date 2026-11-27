@@ -1,7 +1,7 @@
 import "server-only";
 import { notFound, redirect } from "next/navigation";
 import { db } from "@/lib/db";
-import { requireRole } from "@/lib/dal";
+import { getCurrentUser, requireRole } from "@/lib/dal";
 import type { PlanStatus } from "@/generated/prisma/enums";
 import type { EditorTarget } from "@/app/(app)/field/plans/[planId]/plan-editor";
 
@@ -72,17 +72,35 @@ export async function getTeamPlanForReview(planId: string) {
 }
 
 /**
- * Vérifie qu'une cible appartient à un plan modifiable du délégué connecté.
+ * Cible modifiable par l'utilisateur connecté :
+ * - délégué : cible d'un de ses plans en création ;
+ * - manager terrain : cible d'un plan de son équipe envoyé en validation.
  * À appeler dans chaque server action : on ne fait jamais confiance aux identifiants reçus du client.
+ * `status` est le statut que le plan doit encore avoir au moment de l'écriture.
  */
 export async function requireEditableTarget(targetId: string) {
-  const user = await requireRole("FIELD_USER");
+  const user = await getCurrentUser();
+  const scope =
+    user.role === "FIELD_USER"
+      ? { plan: { ownerId: user.id, status: "IN_CREATION" as const } }
+      : user.role === "FIELD_MANAGER"
+        ? { plan: { owner: { managerId: user.id }, status: "IN_VALIDATION" as const } }
+        : null;
+  if (!scope) throw new Error("Not allowed to edit plans");
+
   const target = await db.target.findFirst({
-    where: { id: targetId, plan: { ownerId: user.id, status: { in: EDITABLE_STATUSES } } },
-    select: { id: true, planId: true },
+    where: { id: targetId, plan: scope.plan },
+    select: { id: true, planId: true, accountId: true, account: { select: { name: true } } },
   });
   if (!target) throw new Error("Target not found or plan not editable");
-  return target;
+  return {
+    id: target.id,
+    planId: target.planId,
+    accountId: target.accountId,
+    name: target.account.name,
+    user,
+    status: scope.plan.status,
+  };
 }
 
 /** Plan modifiable du délégué connecté. Lève une erreur sinon (à utiliser dans les server actions). */

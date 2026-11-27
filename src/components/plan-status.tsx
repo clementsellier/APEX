@@ -28,6 +28,11 @@ export async function PlanNotice({
   const last = history[0];
   const when = (e: HistoryEvent) => format.dateTime(e.date, { dateStyle: "long" });
 
+  // Le manager a-t-il modifié le plan juste avant sa décision ?
+  const editedByManager = history[1]?.action === "UPDATED_BY_MANAGER";
+  // Pendant la revue, le dernier événement peut être une modification du manager.
+  const submitted = history.find((e) => e.action === "SUBMITTED");
+
   let tone: keyof typeof TONES;
   let message: string;
   let comment: HistoryEvent | undefined;
@@ -37,10 +42,10 @@ export async function PlanNotice({
     tone = "amber";
     message = t(`notice.returned.${audience}`, { name: last.actor, date: when(last) });
     comment = last;
-  } else if (status === "IN_VALIDATION" && last?.action === "SUBMITTED") {
+  } else if (status === "IN_VALIDATION" && submitted) {
     tone = "indigo";
-    message = t(`notice.submitted.${audience}`, { name: last.actor, date: when(last) });
-    comment = last;
+    message = t(`notice.submitted.${audience}`, { name: submitted.actor, date: when(submitted) });
+    comment = submitted;
   } else if (status === "VALIDATED" && last?.action === "VALIDATED") {
     tone = "green";
     message = t(`notice.validated.${audience}`, { name: last.actor, date: when(last) });
@@ -49,10 +54,15 @@ export async function PlanNotice({
     tone = audience === "field" ? "amber" : "neutral";
     message = t(`notice.readOnly.${audience}`);
   }
+  const showEdited =
+    editedByManager && (last?.action === "VALIDATED" || last?.action === "RETURNED");
 
   return (
     <div role="status" className={`rounded-xl px-4 py-3 text-sm ${TONES[tone]}`}>
-      <p>{message}</p>
+      <p>
+        {message}
+        {showEdited && <> {t(`notice.edited.${audience}`)}</>}
+      </p>
       {comment?.comment && (
         <blockquote className="mt-2 border-l-2 border-current/30 pl-3 whitespace-pre-line italic">
           {comment.comment}
@@ -62,6 +72,8 @@ export async function PlanNotice({
   );
 }
 
+const GOAL_KEYS = ["goalCall", "goalEvtAtt", "goalAemail"] as const;
+
 const DOTS: Record<HistoryEvent["action"], string> = {
   CREATED: "bg-foreground/40",
   SUBMITTED: "bg-indigo-500",
@@ -70,10 +82,14 @@ const DOTS: Record<HistoryEvent["action"], string> = {
   UPDATED_BY_MANAGER: "bg-fuchsia-500",
 };
 
-/** Historique du plan (création, envois, validations, renvois), du plus récent au plus ancien. */
+/** Historique du plan (création, envois, modifications du manager, décisions), du plus récent au plus ancien. */
 export async function PlanHistory({ history }: { history: HistoryEvent[] }) {
   if (history.length === 0) return null;
-  const [t, format] = await Promise.all([getTranslations("Workflow"), getFormatter()]);
+  const [t, tPlan, format] = await Promise.all([
+    getTranslations("Workflow"),
+    getTranslations("PlanEditor"),
+    getFormatter(),
+  ]);
 
   return (
     <section>
@@ -93,6 +109,29 @@ export async function PlanHistory({ history }: { history: HistoryEvent[] }) {
             </p>
             {e.comment && (
               <p className="mt-1 text-sm whitespace-pre-line text-foreground/70">{e.comment}</p>
+            )}
+            {e.changes.length > 0 && (
+              <ul className="mt-2 flex flex-col gap-1.5 text-sm">
+                {e.changes.map((change) => (
+                  <li key={change.name} className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="font-medium">{change.name}</span>
+                    {change.after === null ? (
+                      <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-xs text-red-700 dark:text-red-300">
+                        {t("removed")}
+                      </span>
+                    ) : (
+                      GOAL_KEYS.filter((k) => change.before[k] !== change.after![k]).map((k) => (
+                        <span
+                          key={k}
+                          className="rounded-full bg-fuchsia-500/10 px-2 py-0.5 text-xs text-fuchsia-800 tabular-nums dark:text-fuchsia-200"
+                        >
+                          {tPlan(`short.${k}`)} {change.before[k]} → {change.after![k]}
+                        </span>
+                      ))
+                    )}
+                  </li>
+                ))}
+              </ul>
             )}
           </li>
         ))}

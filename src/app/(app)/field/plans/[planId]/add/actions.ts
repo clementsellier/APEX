@@ -59,7 +59,8 @@ export async function addTarget(input: z.input<typeof addSchema>): Promise<AddRe
 export async function undoAddTarget(targetId: string): Promise<{ ok: boolean }> {
   if (typeof targetId !== "string" || !targetId) return { ok: false };
   try {
-    const { planId } = await requireEditableTarget(targetId);
+    const { planId, user } = await requireEditableTarget(targetId);
+    if (user.role !== "FIELD_USER") return { ok: false };
     await db.target.delete({ where: { id: targetId } });
     revalidatePath(`/field/plans/${planId}`);
     return { ok: true };

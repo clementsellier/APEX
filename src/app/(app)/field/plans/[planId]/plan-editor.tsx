@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState, type ReactNode } from "react";
+import { createContext, useContext, useMemo, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { AnimatedNumber } from "@/components/animated-number";
@@ -27,11 +27,21 @@ const SAVE_DELAY_MS = 600;
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
+// Donne aux blocs affichés dans l'éditeur (ex. décision du manager) le moyen d'enregistrer
+// les modifications en attente avant d'agir sur le plan.
+const FlushContext = createContext<() => Promise<boolean>>(async () => true);
+
+/** Enregistre tout de suite les objectifs modifiés et attend la fin des enregistrements. */
+export function usePlanFlush() {
+  return useContext(FlushContext);
+}
+
 type GoalsPayload = { targetId: string; goalCall: number; goalEvtAtt: number; goalAemail: number };
 
 /**
  * Plan affiché par brick avec ses totaux.
  * - délégué, plan en création : objectifs modifiables, ajout / retrait de cibles, envoi au manager
+ * - manager, plan en validation : objectifs modifiables et retrait de cibles, tracés dans l'historique
  * - sinon (plan envoyé, validé, en cours, ou vue du manager) : lecture seule
  */
 export function PlanEditor({
@@ -42,6 +52,7 @@ export function PlanEditor({
   editable,
   initialTargets,
   backHref = "/field",
+  mode = "field",
   notice,
   panel,
 }: {
@@ -53,6 +64,8 @@ export function PlanEditor({
   editable: boolean;
   initialTargets: EditorTarget[];
   backHref?: string;
+  /** « manager » : modification par le manager terrain (pas d'envoi ni d'ajout de cibles). */
+  mode?: "field" | "manager";
   /** Bandeau d'état (envoyé, renvoyé, validé…) calculé côté serveur. */
   notice?: ReactNode;
   /** Bloc affiché sous le bandeau (ex. décision du manager). */
@@ -153,15 +166,17 @@ export function PlanEditor({
         {editable && (
           <div className="flex flex-wrap items-center gap-4">
             <SaveIndicator state={saveState} />
-            <button
-              type="button"
-              onClick={() => setSubmitOpen(true)}
-              disabled={targets.length === 0}
-              title={targets.length === 0 ? t("Submit.needTargets") : undefined}
-              className="rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 active:scale-95 disabled:opacity-40"
-            >
-              {t("Submit.button")} →
-            </button>
+            {mode === "field" && (
+              <button
+                type="button"
+                onClick={() => setSubmitOpen(true)}
+                disabled={targets.length === 0}
+                title={targets.length === 0 ? t("Submit.needTargets") : undefined}
+                className="rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 active:scale-95 disabled:opacity-40"
+              >
+                {t("Submit.button")} →
+              </button>
+            )}
           </div>
         )}
       </div>
@@ -172,7 +187,7 @@ export function PlanEditor({
             {t("PlanEditor.readOnly")}
           </p>
         ))}
-      {panel}
+      <FlushContext value={flush}>{panel}</FlushContext>
 
       {/* Totaux du plan */}
       <section className="sticky top-0 z-10 -mx-4 grid grid-cols-3 gap-3 bg-background/90 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
@@ -279,7 +294,7 @@ export function PlanEditor({
         );
       })}
 
-      {editable && (
+      {editable && mode === "field" && (
         <div className="flex justify-center">
           <Link
             href={`/field/plans/${planId}/add`}
