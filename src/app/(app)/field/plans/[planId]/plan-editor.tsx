@@ -154,9 +154,19 @@ export function PlanEditor({
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <Link href={backHref} className="text-sm text-foreground/60 hover:text-foreground">
-            ← {t("PlanEditor.back")}
-          </Link>
+          <div className="flex gap-4 text-sm">
+            <Link href={backHref} className="text-foreground/60 hover:text-foreground">
+              ← {t("PlanEditor.back")}
+            </Link>
+            {mode === "field" && (
+              <Link
+                href={`/field/plans/${planId}/stats`}
+                className="text-foreground/60 hover:text-foreground"
+              >
+                {t("PlanEditor.stats")} →
+              </Link>
+            )}
+          </div>
           <h1 className="mt-1 font-mono text-2xl font-semibold">{planName}</h1>
           <p className="text-sm text-foreground/60">
             {ownerName && <>{ownerName} · </>}

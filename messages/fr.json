@@ -90,7 +90,8 @@
       "saving": "Enregistrement…",
       "saved": "Enregistré",
       "error": "Échec de l'enregistrement — rechargez la page"
-    }
+    },
+    "stats": "Analyse du plan"
   },
   "Theme": {
     "label": "Thème",
@@ -202,5 +203,60 @@
       }
     },
     "removed": "retiré du plan"
+  },
+  "Stats": {
+    "back": "Retour au plan",
+    "title": "Analyse du plan",
+    "comparedTo": "comparé à : {label}",
+    "actual": {
+      "previous": "Réalisé {cycle} (cycle précédent)",
+      "current": "Réalisé {cycle} (à date)",
+      "none": "aucun cycle de référence"
+    },
+    "tile": {
+      "interactions": "Interactions prévues",
+      "vsActual": "{sign}{value} % vs réalisé {cycle}",
+      "targets": "Cibles",
+      "accounts": "{count, plural, =0 {aucun PDS vu} one {# PDS vu} other {# PDS vus}} en {cycle}",
+      "perTarget": "Interactions par cible",
+      "perAccount": "{value} par PDS vu en {cycle}",
+      "alignment": "Alignement marché",
+      "alignmentHint": "100 % = activité répartie comme le marché"
+    },
+    "chart": {
+      "title": "Poids des bricks : plan vs marché",
+      "intro": "Part de l'activité prévue dans chaque brick, comparée à son poids dans les ventes du secteur.",
+      "legend": "Légende",
+      "plan": "Part de l'activité du plan",
+      "market": "Poids marché",
+      "noData": "pas de donnée marché",
+      "aria": "Brick {brick} : plan {plan} %, marché {market} %",
+      "tooltipTitle": "Brick {brick}",
+      "evolution": "Indice d'évolution",
+      "over": "Brick sur-investie de {gap} points par rapport à son poids marché.",
+      "under": "Brick sous-investie de {gap} points par rapport à son poids marché.",
+      "gapHint": "▲ / ▼ : écart en points entre la part du plan et le poids marché.",
+      "points": "{gap} pts"
+    },
+    "table": {
+      "title": "Détail par brick",
+      "plan": "Plan",
+      "market": "Performance",
+      "brick": "Brick",
+      "total": "Total",
+      "note": "Interactions = visites + participations à des événements + e-mails approuvés. Indice d'évolution : ventes vs N-1, base 100."
+    },
+    "col": {
+      "call": "Visites",
+      "evtAtt": "Évts",
+      "aemail": "E-mails",
+      "interactions": "Interactions",
+      "targets": "Cibles",
+      "perTarget": "Int. / cible",
+      "share": "Poids marché",
+      "evolution": "Indice évol.",
+      "accounts": "PDS vus",
+      "perAccount": "Int. / PDS"
+    }
   }
 }

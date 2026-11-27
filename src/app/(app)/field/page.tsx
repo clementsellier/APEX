@@ -41,7 +41,7 @@ async function FieldHomeContent() {
           plan={current}
           actions={[
             { label: t("Field.checkAndUpdate"), open: true },
-            { label: t("Field.statsOverview") },
+            { label: t("Field.statsOverview"), open: true, path: "/stats" },
           ]}
           accent="from-indigo-500 to-sky-500"
         />
@@ -54,7 +54,7 @@ async function FieldHomeContent() {
               label: t(next?.status === "IN_CREATION" ? "Field.prepareNext" : "Field.viewPlan"),
               open: true,
             },
-            { label: t("Field.statsOverview") },
+            { label: t("Field.statsOverview"), open: true, path: "/stats" },
           ]}
           accent="from-fuchsia-500 to-orange-400"
         />
@@ -73,7 +73,7 @@ async function PlanCard({
   intro: string;
   empty: string;
   plan?: { id: string; name: string; status: string; _count: { targets: number } };
-  actions: { label: string; open?: boolean }[];
+  actions: { label: string; open?: boolean; path?: string }[];
   accent: string;
 }) {
   const t = await getTranslations();
@@ -90,11 +90,11 @@ async function PlanCard({
             {t("Field.targets", { count: plan._count.targets })}
           </p>
           <ul className="mt-6 flex flex-col gap-2">
-            {actions.map(({ label, open }) => (
+            {actions.map(({ label, open, path = "" }) => (
               <li key={label}>
                 {open ? (
                   <Link
-                    href={`/field/plans/${plan.id}`}
+                    href={`/field/plans/${plan.id}${path}`}
                     className="flex items-center justify-between rounded-lg bg-foreground/5 px-4 py-3 text-sm transition hover:bg-foreground/10"
                   >
                     <span>› {label}</span>
