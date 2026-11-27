@@ -270,7 +270,8 @@
       "home": "Home",
       "users": "Users",
       "cycles": "Cycles",
-      "map": "Map"
+      "map": "Map",
+      "data": "Data"
     },
     "status": {
       "ACTIVE": "Active",
@@ -468,6 +469,89 @@
           "excelNoColumns": "“UGA” column not found in the first sheet.",
           "failed": "The import failed."
         }
+      }
+    },
+    "data": {
+      "title": "Data",
+      "intro": "Import referentials from Excel or CSV and export plans for the CRM. Each import is analyzed first: nothing is saved until you click “Import”.",
+      "template": "Excel template",
+      "file": "File to import",
+      "analyze": "Analyze",
+      "analyzing": "Analyzing…",
+      "apply": "Import {count, plural, one {# row} other {# rows}}",
+      "importing": "Importing…",
+      "preview": "Import preview",
+      "applied": "Import done: {count, plural, =0 {nothing to save} one {# item saved} other {# items saved}}.",
+      "counts": {
+        "total": "Rows read",
+        "created": "To create",
+        "updated": "To update",
+        "skipped": "Rows skipped",
+        "plans_created": "Plans to create",
+        "plans_updated": "Plans to complete"
+      },
+      "issuesTitle": "{errors, plural, =0 {No error} one {# error} other {# errors}} · {warnings, plural, =0 {no warning} one {# warning} other {# warnings}}",
+      "line": "row {line}",
+      "moreIssues": "… and {count} more.",
+      "kinds": {
+        "accounts": {
+          "title": "HCPs",
+          "intro": "Accounts (healthcare professionals, pharmacies) with address and UGA. Key: CRM ID."
+        },
+        "qualifs": {
+          "title": "HCP qualifications",
+          "intro": "Qualifications per team (potential, HTA…) with their color. Import after HCPs."
+        },
+        "users": {
+          "title": "Users",
+          "intro": "Key: e-mail. New accounts have no password: generate one from the user page."
+        },
+        "plans": {
+          "title": "Empty or pre-built plans",
+          "intro": "One row per target (cycle, rep, HCP, goals); without an HCP, creates an empty plan. Plans are created “in progress”."
+        }
+      },
+      "errors": {
+        "noFile": "Choose a file.",
+        "unreadable": "Unreadable file: use Excel (.xlsx) or CSV.",
+        "empty": "The file has no data rows.",
+        "missingColumns": "Missing required columns: {detail}.",
+        "failed": "The import failed. No data was changed for the current batch."
+      },
+      "issues": {
+        "missingCrmId": "Missing CRM ID.",
+        "duplicate": "Duplicate in file: {value}.",
+        "invalidType": "Unknown type: “{value}” (HCP or PHARMACY).",
+        "missingName": "Missing name.",
+        "unknownBrick": "Unknown UGA: {value}.",
+        "invalidCoordinates": "Invalid coordinates: {value}.",
+        "noBrick": "No UGA: the HCP won't appear in any territory.",
+        "unknownAccount": "Unknown HCP: {value} (import HCPs first).",
+        "missingField": "Missing required field.",
+        "invalidColor": "Invalid color: {value} (#RRGGBB format).",
+        "invalidEmail": "Invalid e-mail: {value}.",
+        "invalidRole": "Unknown role: “{value}”.",
+        "invalidLocale": "Unknown language: “{value}” (FR or EN).",
+        "invalidStatus": "Unknown status: “{value}” (ACTIVE or INACTIVE).",
+        "territoryRequired": "Territory is required for a field rep.",
+        "selfChange": "Row skipped: you can't change your own role or status.",
+        "managerRequired": "Manager required for this role.",
+        "managerInvalid": "Manager not found, inactive or wrong role: {value}.",
+        "noPassword": "{value} new accounts without password: generate one from their page.",
+        "unknownCycle": "Unknown cycle: {value}.",
+        "unknownOwner": "Field rep not found: {value}.",
+        "ownerWithoutTerritory": "Field rep without territory: {value}.",
+        "planLocked": "Plan already sent or approved, not changed: {value}.",
+        "invalidGoal": "Invalid goals: {value} (integers 0 to 99).",
+        "outsideTerritory": "HCP outside the rep's territory: {value}."
+      },
+      "export": {
+        "title": "Export plans for the CRM",
+        "intro": "Excel file with one row per target and CRM IDs (rep, HCP, plan). By default: approved, active or completed plans.",
+        "cycle": "Cycle",
+        "allCycles": "All cycles",
+        "includeAll": "Include plans not yet approved",
+        "download": "Download"
       }
     }
   },

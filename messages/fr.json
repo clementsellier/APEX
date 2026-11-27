@@ -270,7 +270,8 @@
       "home": "Accueil",
       "users": "Utilisateurs",
       "cycles": "Cycles",
-      "map": "Carte"
+      "map": "Carte",
+      "data": "Données"
     },
     "status": {
       "ACTIVE": "Actif",
@@ -468,6 +469,89 @@
           "excelNoColumns": "Colonne « UGA » introuvable dans le premier onglet.",
           "failed": "L'import a échoué."
         }
+      }
+    },
+    "data": {
+      "title": "Données",
+      "intro": "Importez les référentiels depuis Excel ou CSV et exportez les plans pour le CRM. Chaque import s'analyse d'abord : rien n'est enregistré avant de cliquer sur « Importer ».",
+      "template": "Modèle Excel",
+      "file": "Fichier à importer",
+      "analyze": "Analyser",
+      "analyzing": "Analyse…",
+      "apply": "Importer {count, plural, one {# ligne} other {# lignes}}",
+      "importing": "Import…",
+      "preview": "Aperçu de l'import",
+      "applied": "Import terminé : {count, plural, =0 {rien à enregistrer} one {# élément enregistré} other {# éléments enregistrés}}.",
+      "counts": {
+        "total": "Lignes lues",
+        "created": "À créer",
+        "updated": "À mettre à jour",
+        "skipped": "Lignes ignorées",
+        "plans_created": "Plans à créer",
+        "plans_updated": "Plans à compléter"
+      },
+      "issuesTitle": "{errors, plural, =0 {Aucune erreur} one {# erreur} other {# erreurs}} · {warnings, plural, =0 {aucun avertissement} one {# avertissement} other {# avertissements}}",
+      "line": "ligne {line}",
+      "moreIssues": "… et {count} autres.",
+      "kinds": {
+        "accounts": {
+          "title": "PDS",
+          "intro": "Comptes (professionnels de santé, pharmacies) avec adresse et UGA. Clé : identifiant CRM."
+        },
+        "qualifs": {
+          "title": "Qualifications des PDS",
+          "intro": "Qualifications par équipe (potentiel, HTA…) avec leur couleur. À importer après les PDS."
+        },
+        "users": {
+          "title": "Utilisateurs",
+          "intro": "Clé : e-mail. Les nouveaux comptes n'ont pas de mot de passe : générez-le depuis la fiche de l'utilisateur."
+        },
+        "plans": {
+          "title": "Plans vides ou préconçus",
+          "intro": "Une ligne par cible (cycle, délégué, PDS, objectifs) ; sans PDS, crée un plan vide. Les plans sont créés « en création »."
+        }
+      },
+      "errors": {
+        "noFile": "Choisissez un fichier.",
+        "unreadable": "Fichier illisible : utilisez un Excel (.xlsx) ou un CSV.",
+        "empty": "Le fichier ne contient aucune ligne de données.",
+        "missingColumns": "Colonnes obligatoires absentes : {detail}.",
+        "failed": "L'import a échoué. Aucune donnée n'a été modifiée pour le lot en cours."
+      },
+      "issues": {
+        "missingCrmId": "Identifiant CRM manquant.",
+        "duplicate": "Doublon dans le fichier : {value}.",
+        "invalidType": "Type inconnu : « {value} » (HCP ou PHARMACIE).",
+        "missingName": "Nom manquant.",
+        "unknownBrick": "UGA inconnue : {value}.",
+        "invalidCoordinates": "Coordonnées invalides : {value}.",
+        "noBrick": "Pas d'UGA : le PDS n'apparaîtra dans aucun secteur.",
+        "unknownAccount": "PDS inconnu : {value} (importez d'abord les PDS).",
+        "missingField": "Champ obligatoire manquant.",
+        "invalidColor": "Couleur invalide : {value} (format #RRGGBB).",
+        "invalidEmail": "E-mail invalide : {value}.",
+        "invalidRole": "Rôle inconnu : « {value} ».",
+        "invalidLocale": "Langue inconnue : « {value} » (FR ou EN).",
+        "invalidStatus": "Statut inconnu : « {value} » (ACTIF ou INACTIF).",
+        "territoryRequired": "Secteur obligatoire pour un délégué.",
+        "selfChange": "Ligne ignorée : vous ne pouvez pas modifier votre propre rôle ni votre statut.",
+        "managerRequired": "Manager obligatoire pour ce rôle.",
+        "managerInvalid": "Manager introuvable, inactif ou de mauvais rôle : {value}.",
+        "noPassword": "{value} nouveaux comptes sans mot de passe : générez-le depuis leur fiche.",
+        "unknownCycle": "Cycle inconnu : {value}.",
+        "unknownOwner": "Délégué introuvable : {value}.",
+        "ownerWithoutTerritory": "Délégué sans secteur : {value}.",
+        "planLocked": "Plan déjà envoyé ou validé, non modifié : {value}.",
+        "invalidGoal": "Objectifs invalides : {value} (entiers de 0 à 99).",
+        "outsideTerritory": "PDS hors du secteur du délégué : {value}."
+      },
+      "export": {
+        "title": "Export des plans pour le CRM",
+        "intro": "Fichier Excel avec une ligne par cible et les identifiants CRM (délégué, PDS, plan). Par défaut : plans validés, en cours ou terminés.",
+        "cycle": "Cycle",
+        "allCycles": "Tous les cycles",
+        "includeAll": "Inclure les plans non validés",
+        "download": "Télécharger"
       }
     }
   },
