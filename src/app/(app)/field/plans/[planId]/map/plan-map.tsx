@@ -4,12 +4,14 @@ import { useMemo, useState, useSyncExternalStore } from "react";
 import { useFormatter, useTranslations } from "next-intl";
 import type { Geometry } from "geojson";
 import { labelPoint } from "@/components/map/geo";
-import { diverging, sequential, type Scale } from "@/components/map/scales";
+import { diverging, NO_DATA, sequential, type Scale } from "@/components/map/scales";
 import { UgaMap, type MapZone } from "@/components/map/uga-map";
 import type { MapTarget } from "@/lib/plan-map";
 import type { BrickStats } from "@/lib/plan-stats";
 
 type Indicator = "gap" | "market" | "evolution" | "interactions";
+type View = "focus" | "all" | "france";
+const VIEWS: View[] = ["focus", "all", "france"];
 const INDICATORS: Indicator[] = ["gap", "market", "evolution", "interactions"];
 
 function useIsDark() {
@@ -46,7 +48,10 @@ export function PlanMap({
   const [indicator, setIndicator] = useState<Indicator>("gap");
   const [selected, setSelected] = useState<string | null>(null);
   // Cadrage : les UGA où se joue le plan (cibles ou données marché), ou tout le secteur.
-  const [view, setView] = useState<"focus" | "all">("focus");
+  const [view, setView] = useState<View>("focus");
+  // Reste de la France : chargé seulement quand on choisit cette vue.
+  const [france, setFrance] = useState<{ code: string; geometry: Geometry }[] | null>(null);
+  const [franceState, setFranceState] = useState<"idle" | "loading" | "failed">("idle");
 
   const byBrick = useMemo(() => new Map(bricks.map((b) => [b.brick, b])), [bricks]);
   const pct = (v: number) => format.number(v / 100, { style: "percent", maximumFractionDigits: 0 });
@@ -109,10 +114,32 @@ export function PlanMap({
     const codes = new Set(labels.map((l) => l.id));
     return zones.filter((z) => codes.has(z.code));
   }, [labels, zones]);
+  const sectorCodes = useMemo(() => new Set(zones.map((z) => z.code)), [zones]);
+  const context = useMemo(
+    () => (view === "france" && france ? france.filter((z) => !sectorCodes.has(z.code)) : []),
+    [view, france, sectorCodes],
+  );
   const focus =
-    view === "focus" && focusZones.length
-      ? { key: "focus", zones: focusZones }
-      : { key: "all", zones: [] };
+    view === "france" && france
+      ? { key: "france", zones: france }
+      : view === "focus" && focusZones.length
+        ? { key: "focus", zones: focusZones }
+        : { key: "all", zones: [] };
+
+  async function chooseView(next: View) {
+    setView(next);
+    if (next !== "france" || france) return;
+    setFranceState("loading");
+    try {
+      const res = await fetch("/api/uga/shapes");
+      if (!res.ok) throw new Error(String(res.status));
+      const data = (await res.json()) as { zones: { code: string; geometry: Geometry }[] };
+      setFrance(data.zones);
+      setFranceState("idle");
+    } catch {
+      setFranceState("failed");
+    }
+  }
 
   const points = useMemo(
     () =>
@@ -194,21 +221,45 @@ export function PlanMap({
           </li>
         ))}
         <li className="flex items-center gap-1.5">
+          <span className="h-3 w-3 rounded-sm" style={{ backgroundColor: NO_DATA[theme] }} />
+          {t("noData")}
+        </li>
+        <li className="flex items-center gap-1.5">
           <span className="h-2.5 w-2.5 rounded-full border-2 border-background bg-foreground ring-1 ring-foreground/30" />
           {t("targetPoint")}
         </li>
-        {focusZones.length > 0 && (
-          <li className="ml-auto">
-            <button
-              type="button"
-              onClick={() => setView(view === "focus" ? "all" : "focus")}
-              className="rounded-full border border-black/15 px-3 py-1 text-xs text-foreground/80 transition hover:bg-foreground/5 dark:border-white/20"
-            >
-              {view === "focus" ? t("showAll") : t("showFocus")}
-            </button>
+        {view === "france" && (
+          <li className="flex items-center gap-1.5">
+            <span className="h-3 w-3 rounded-sm border border-foreground/20 bg-foreground/5" />
+            {t("outsideSector")}
           </li>
         )}
+        <li className="ml-auto">
+          <div
+            role="radiogroup"
+            aria-label={t("view.label")}
+            className="flex gap-0.5 rounded-full border border-black/10 p-0.5 dark:border-white/15"
+          >
+            {VIEWS.filter((v) => v !== "focus" || focusZones.length > 0).map((v) => (
+              <button
+                key={v}
+                type="button"
+                role="radio"
+                aria-checked={view === v}
+                onClick={() => chooseView(v)}
+                className="rounded-full px-3 py-1 text-xs text-foreground/60 transition hover:text-foreground aria-checked:bg-foreground aria-checked:text-background"
+              >
+                {v === "france" && franceState === "loading" ? "…" : t(`view.${v}`)}
+              </button>
+            ))}
+          </div>
+        </li>
       </ul>
+      {franceState === "failed" && (
+        <p role="alert" className="-mt-2 text-xs text-red-700 dark:text-red-400">
+          {t("franceFailed")}
+        </p>
+      )}
 
       <div className="grid gap-4 lg:grid-cols-[1fr_18rem]">
         <UgaMap
@@ -218,6 +269,7 @@ export function PlanMap({
           selected={selected}
           onSelect={setSelected}
           focus={focus}
+          context={context}
           tooltip={details}
           ariaLabel={t("aria")}
         />

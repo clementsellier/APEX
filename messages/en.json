@@ -506,8 +506,15 @@
     "panelTitle": "Your territory",
     "panelHint": "Hover a UGA to see its figures, click it to list its targets.",
     "summary": "{zones} UGAs · {targets} targets, {located} located",
-    "showAll": "Show whole territory",
-    "showFocus": "Focus on my targets"
+    "view": {
+      "label": "View",
+      "focus": "My targets",
+      "all": "Territory",
+      "france": "France"
+    },
+    "outsideSector": "Outside territory",
+    "franceFailed": "Couldn't load the map of France.",
+    "noData": "No data"
   },
   "MapControls": {
     "zoomIn": "Zoom in",

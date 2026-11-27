@@ -506,8 +506,15 @@
     "panelTitle": "Votre secteur",
     "panelHint": "Survolez une UGA pour voir ses chiffres, cliquez dessus pour la liste de ses cibles.",
     "summary": "{zones} UGA · {targets} cibles, dont {located} géolocalisées",
-    "showAll": "Voir tout le secteur",
-    "showFocus": "Recentrer sur mes cibles"
+    "view": {
+      "label": "Cadrage",
+      "focus": "Mes cibles",
+      "all": "Secteur",
+      "france": "France"
+    },
+    "outsideSector": "Hors secteur",
+    "franceFailed": "Impossible de charger la carte de France.",
+    "noData": "Sans donnée"
   },
   "MapControls": {
     "zoomIn": "Zoomer",
