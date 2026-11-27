@@ -258,5 +258,147 @@
       "accounts": "HCPs seen",
       "perAccount": "Int. / HCP"
     }
+  },
+  "Admin": {
+    "nav": {
+      "label": "Back office",
+      "home": "Home",
+      "users": "Users",
+      "cycles": "Cycles"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "INACTIVE": "Deactivated"
+    },
+    "home": {
+      "users": "Active users",
+      "inactive": "{count, plural, =0 {no deactivated account} one {# deactivated account} other {# deactivated accounts}}",
+      "cycles": "Current cycle",
+      "nextCycle": "Next cycle: {code}",
+      "noNextCycle": "No next cycle defined"
+    },
+    "users": {
+      "title": "Users",
+      "count": "{shown} shown out of {total}",
+      "new": "New user",
+      "search": "Search a name, an e-mail, a territory…",
+      "allRoles": "All roles",
+      "allStatuses": "All statuses",
+      "empty": "No user matches these filters.",
+      "never": "never",
+      "col": {
+        "name": "Name",
+        "role": "Role",
+        "manager": "Manager",
+        "territory": "Team · territory",
+        "status": "Status",
+        "lastLogin": "Last sign-in"
+      },
+      "section": {
+        "identity": "Identity",
+        "access": "Role and access",
+        "organisation": "Organisation"
+      },
+      "field": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "email": "E-mail address",
+        "locale": "Language",
+        "role": "Role",
+        "status": "Status",
+        "manager": "Manager ({role})",
+        "team": "Team",
+        "region": "Region",
+        "territory": "Territory"
+      },
+      "hint": {
+        "team": "E.g. FRONCO",
+        "territory": "E.g. Sect104 — required for a field rep"
+      },
+      "chooseManager": "Choose…",
+      "selfLocked": "You can't change your own role or status.",
+      "create": "Create user",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Changes saved",
+      "cancel": "Cancel",
+      "backToList": "Back to list",
+      "viewUser": "View user",
+      "created": "User created.",
+      "createdOn": "Created on {date}",
+      "lastLoginOk": "last signed in on {date}",
+      "lastLoginFailed": "last attempt failed on {date}",
+      "neverLoggedIn": "never signed in",
+      "plans": "{count, plural, =0 {no plan} one {# plan} other {# plans}}",
+      "reports": "{count, plural, one {Manages # active person:} other {Manages # active people:}}",
+      "tempPassword": {
+        "intro": "Send this temporary password to the person through a secure channel.",
+        "copy": "Copy",
+        "copied": "Copied",
+        "once": "It won't be shown again: if it's lost, generate a new one from the user page."
+      },
+      "reset": {
+        "title": "Password",
+        "intro": "Generates a new temporary password. The old one will stop working.",
+        "button": "Reset password",
+        "confirm": "Generate a new password for {name}? The old one will stop working.",
+        "done": "New password for {name}:",
+        "failed": "The reset failed."
+      },
+      "errors": {
+        "required": "Required field.",
+        "invalidEmail": "Invalid e-mail address.",
+        "emailTaken": "This address is already in use.",
+        "territoryRequired": "Territory is required for a field rep.",
+        "managerRequired": "Choose a manager.",
+        "managerInvalid": "This manager isn't valid for this role.",
+        "selfRole": "You can't remove your own admin role.",
+        "selfStatus": "You can't deactivate your own account.",
+        "hasActiveReports": "This person manages active users: assign them to another manager first.",
+        "failed": "Saving failed. Try again."
+      }
+    },
+    "cycles": {
+      "title": "Cycles",
+      "intro": "Plans belong to a cycle. Two cycles can't overlap.",
+      "back": "Back to cycles",
+      "period": "Period",
+      "plans": "Plans",
+      "edit": "Edit",
+      "empty": "No cycle defined.",
+      "phase": {
+        "label": "Phase",
+        "past": "Ended",
+        "current": "Current",
+        "upcoming": "Upcoming"
+      },
+      "field": {
+        "code": "Code",
+        "label": "Label",
+        "startDate": "Start",
+        "endDate": "End"
+      },
+      "hint": {
+        "code": "Format YYC#, e.g. 27C1",
+        "label": "E.g. 2027 – Cycle 1"
+      },
+      "create": "Create",
+      "save": "Save",
+      "created": "Cycle created.",
+      "saved": "Changes saved.",
+      "delete": "Delete",
+      "confirmDelete": "Delete cycle {code}?",
+      "usedBy": "{count, plural, =0 {No plan attached} one {# plan attached} other {# plans attached}}",
+      "inUseWarning": "Plans use this cycle: changing its dates changes the reference period of their statistics.",
+      "errors": {
+        "codeFormat": "Expected format: YYC#, e.g. 27C1.",
+        "codeTaken": "This code already exists.",
+        "date": "Invalid date.",
+        "endBeforeStart": "End must be after start.",
+        "overlap": "Overlaps cycle {cycle}.",
+        "hasPlans": "Not possible: plans are attached to this cycle.",
+        "failed": "Saving failed. Try again."
+      }
+    }
   }
 }

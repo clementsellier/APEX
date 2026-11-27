@@ -258,5 +258,147 @@
       "accounts": "PDS vus",
       "perAccount": "Int. / PDS"
     }
+  },
+  "Admin": {
+    "nav": {
+      "label": "Back-office",
+      "home": "Accueil",
+      "users": "Utilisateurs",
+      "cycles": "Cycles"
+    },
+    "status": {
+      "ACTIVE": "Actif",
+      "INACTIVE": "Désactivé"
+    },
+    "home": {
+      "users": "Utilisateurs actifs",
+      "inactive": "{count, plural, =0 {aucun compte désactivé} one {# compte désactivé} other {# comptes désactivés}}",
+      "cycles": "Cycle en cours",
+      "nextCycle": "Prochain cycle : {code}",
+      "noNextCycle": "Aucun prochain cycle défini"
+    },
+    "users": {
+      "title": "Utilisateurs",
+      "count": "{shown} affiché(s) sur {total}",
+      "new": "Nouvel utilisateur",
+      "search": "Rechercher un nom, un e-mail, un secteur…",
+      "allRoles": "Tous les rôles",
+      "allStatuses": "Tous les statuts",
+      "empty": "Aucun utilisateur ne correspond à ces filtres.",
+      "never": "jamais",
+      "col": {
+        "name": "Nom",
+        "role": "Rôle",
+        "manager": "Manager",
+        "territory": "Équipe · secteur",
+        "status": "Statut",
+        "lastLogin": "Dernière connexion"
+      },
+      "section": {
+        "identity": "Identité",
+        "access": "Rôle et accès",
+        "organisation": "Organisation"
+      },
+      "field": {
+        "firstName": "Prénom",
+        "lastName": "Nom",
+        "email": "Adresse e-mail",
+        "locale": "Langue",
+        "role": "Rôle",
+        "status": "Statut",
+        "manager": "Manager ({role})",
+        "team": "Équipe",
+        "region": "Région",
+        "territory": "Secteur"
+      },
+      "hint": {
+        "team": "Ex. FRONCO",
+        "territory": "Ex. Sect104 — obligatoire pour un délégué"
+      },
+      "chooseManager": "Choisir…",
+      "selfLocked": "Vous ne pouvez pas modifier votre propre rôle ni votre statut.",
+      "create": "Créer l'utilisateur",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "saved": "Modifications enregistrées",
+      "cancel": "Annuler",
+      "backToList": "Retour à la liste",
+      "viewUser": "Voir la fiche",
+      "created": "Utilisateur créé.",
+      "createdOn": "Créé le {date}",
+      "lastLoginOk": "dernière connexion le {date}",
+      "lastLoginFailed": "dernière tentative échouée le {date}",
+      "neverLoggedIn": "jamais connecté",
+      "plans": "{count, plural, =0 {aucun plan} one {# plan} other {# plans}}",
+      "reports": "{count, plural, one {Encadre # personne active :} other {Encadre # personnes actives :}}",
+      "tempPassword": {
+        "intro": "Transmettez ce mot de passe provisoire à la personne par un canal sûr.",
+        "copy": "Copier",
+        "copied": "Copié",
+        "once": "Il ne sera plus affiché : en cas d'oubli, générez-en un nouveau depuis la fiche."
+      },
+      "reset": {
+        "title": "Mot de passe",
+        "intro": "Génère un nouveau mot de passe provisoire. L'ancien ne fonctionnera plus.",
+        "button": "Réinitialiser le mot de passe",
+        "confirm": "Générer un nouveau mot de passe pour {name} ? L'ancien ne fonctionnera plus.",
+        "done": "Nouveau mot de passe de {name} :",
+        "failed": "La réinitialisation a échoué."
+      },
+      "errors": {
+        "required": "Champ obligatoire.",
+        "invalidEmail": "Adresse e-mail invalide.",
+        "emailTaken": "Cette adresse est déjà utilisée.",
+        "territoryRequired": "Le secteur est obligatoire pour un délégué.",
+        "managerRequired": "Choisissez un manager.",
+        "managerInvalid": "Ce manager n'est pas valide pour ce rôle.",
+        "selfRole": "Vous ne pouvez pas retirer votre propre rôle d'administrateur.",
+        "selfStatus": "Vous ne pouvez pas désactiver votre propre compte.",
+        "hasActiveReports": "Cette personne encadre des utilisateurs actifs : rattachez-les d'abord à un autre manager.",
+        "failed": "L'enregistrement a échoué. Réessayez."
+      }
+    },
+    "cycles": {
+      "title": "Cycles",
+      "intro": "Les plans sont rattachés à un cycle. Deux cycles ne peuvent pas se chevaucher.",
+      "back": "Retour aux cycles",
+      "period": "Période",
+      "plans": "Plans",
+      "edit": "Modifier",
+      "empty": "Aucun cycle défini.",
+      "phase": {
+        "label": "Phase",
+        "past": "Terminé",
+        "current": "En cours",
+        "upcoming": "À venir"
+      },
+      "field": {
+        "code": "Code",
+        "label": "Libellé",
+        "startDate": "Début",
+        "endDate": "Fin"
+      },
+      "hint": {
+        "code": "Format AAC#, ex. 27C1",
+        "label": "Ex. 2027 – Cycle 1"
+      },
+      "create": "Créer",
+      "save": "Enregistrer",
+      "created": "Cycle créé.",
+      "saved": "Modifications enregistrées.",
+      "delete": "Supprimer",
+      "confirmDelete": "Supprimer le cycle {code} ?",
+      "usedBy": "{count, plural, =0 {Aucun plan rattaché} one {# plan rattaché} other {# plans rattachés}}",
+      "inUseWarning": "Des plans utilisent ce cycle : modifier ses dates change la période de référence de leurs statistiques.",
+      "errors": {
+        "codeFormat": "Format attendu : AAC#, ex. 27C1.",
+        "codeTaken": "Ce code existe déjà.",
+        "date": "Date invalide.",
+        "endBeforeStart": "La fin doit être après le début.",
+        "overlap": "Chevauche le cycle {cycle}.",
+        "hasPlans": "Impossible : des plans sont rattachés à ce cycle.",
+        "failed": "L'enregistrement a échoué. Réessayez."
+      }
+    }
   }
 }

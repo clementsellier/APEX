@@ -28,3 +28,14 @@ export function rolesForPath(pathname: string): Role[] | null {
 export function isRole(value: unknown): value is Role {
   return typeof value === "string" && value in ROLE_HOME;
 }
+
+/** Rôle que doit avoir le manager direct de chaque rôle (null = pas de manager). */
+export const MANAGER_ROLE: Record<Role, Role | null> = {
+  FIELD_USER: "FIELD_MANAGER",
+  FIELD_MANAGER: "TEAM_MANAGER",
+  TEAM_MANAGER: null,
+  HQ_USER: null,
+  ADMIN: null,
+};
+
+export const ROLES = Object.keys(ROLE_HOME) as Role[];
