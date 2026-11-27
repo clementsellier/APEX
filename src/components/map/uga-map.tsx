@@ -36,6 +36,9 @@ export type MapOutline = { id: string; geometry: Geometry };
 const SURFACE = { light: "#fcfcfb", dark: "#1a1a19" };
 const INK = { light: "#0b0b0b", dark: "#f0efec" };
 const BORDER = { light: "rgba(11,11,11,0.25)", dark: "rgba(240,239,236,0.25)" };
+// UGA de contexte (hors du périmètre affiché) : plus effacées que les zones « sans donnée ».
+const CONTEXT = { light: "#f3f2ef", dark: "#1f1f1e" };
+const CONTEXT_BORDER = { light: "rgba(11,11,11,0.12)", dark: "rgba(240,239,236,0.1)" };
 
 /** Thème réellement affiché (clair / sombre), d'après l'attribut data-theme et le système. */
 function useResolvedTheme(): "light" | "dark" {
@@ -83,6 +86,7 @@ export function UgaMap({
   height = 520,
   ariaLabel,
   focus,
+  context = [],
 }: {
   zones: MapZone[];
   /** Contours épais (ex. limites de secteur). */
@@ -99,6 +103,8 @@ export function UgaMap({
   ariaLabel: string;
   /** Zones sur lesquelles cadrer (ex. un secteur choisi) ; par défaut toutes les zones. */
   focus?: { key: string; zones: { geometry: Geometry }[] } | null;
+  /** Zones affichées en fond, non interactives (ex. reste de la France). */
+  context?: { code: string; geometry: Geometry }[];
 }) {
   const container = useRef<HTMLDivElement>(null);
   const map = useRef<MapLibre | null>(null);
@@ -148,6 +154,14 @@ export function UgaMap({
     m.addControl(new NavigationControl({ showCompass: false }), "top-right");
     m.on("load", () => {
       const empty = collection([]);
+      m.addSource("context", { type: "geojson", data: empty });
+      m.addLayer({ id: "context-fill", type: "fill", source: "context" });
+      m.addLayer({
+        id: "context-line",
+        type: "line",
+        source: "context",
+        paint: { "line-width": 0.4 },
+      });
       m.addSource("zones", { type: "geojson", data: empty, promoteId: "code" });
       m.addSource("outlines", { type: "geojson", data: empty });
       m.addSource("points", { type: "geojson", data: empty });
@@ -205,6 +219,9 @@ export function UgaMap({
     return () => {
       m.remove();
       map.current = null;
+      // Une carte recréée (rechargement à chaud, double montage en développement)
+      // n'a ses sources qu'après son propre « load ».
+      setReady(false);
     };
     // Carte créée une seule fois : les textes sont ceux de la langue au chargement.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -213,7 +230,13 @@ export function UgaMap({
   // Données.
   useEffect(() => {
     const m = map.current;
-    if (!m || !ready) return;
+    const source = (id: string) => m?.getSource(id) as GeoJSONSource | undefined;
+    if (!m || !ready || !source("zones")) return;
+    source("context")?.setData(
+      collection(
+        context.map((z) => ({ type: "Feature" as const, geometry: z.geometry, properties: {} })),
+      ),
+    );
     (m.getSource("zones") as GeoJSONSource).setData(
       collection(
         zones.map((z) => ({
@@ -237,7 +260,7 @@ export function UgaMap({
         })),
       ),
     );
-  }, [ready, zones, outlines, points, selected]);
+  }, [ready, zones, outlines, points, selected, context]);
 
   // Cadrage : sur la sélection demandée, sinon sur toutes les zones (quand leur liste change).
   const zoneKey = zones.map((z) => z.code).join();
@@ -254,7 +277,10 @@ export function UgaMap({
   useEffect(() => {
     const m = map.current;
     if (!m || !ready) return;
+    if (!m.getLayer("zone-line")) return;
     m.setPaintProperty("bg", "background-color", SURFACE[theme]);
+    m.setPaintProperty("context-fill", "fill-color", CONTEXT[theme]);
+    m.setPaintProperty("context-line", "line-color", CONTEXT_BORDER[theme]);
     m.setPaintProperty("zone-line", "line-color", BORDER[theme]);
     m.setPaintProperty("zone-emphasis", "line-color", INK[theme]);
     m.setPaintProperty("outline", "line-color", INK[theme]);
