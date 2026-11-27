@@ -50,7 +50,10 @@ async function FieldHomeContent() {
           empty={t("Field.noNextPlan")}
           plan={next}
           actions={[
-            { label: t("Field.prepareNext"), open: true },
+            {
+              label: t(next?.status === "IN_CREATION" ? "Field.prepareNext" : "Field.viewPlan"),
+              open: true,
+            },
             { label: t("Field.statsOverview") },
           ]}
           accent="from-fuchsia-500 to-orange-400"

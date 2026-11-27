@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { AnimatedNumber } from "@/components/animated-number";
 import type { PlanStatus } from "@/generated/prisma/enums";
-import { removeTarget, saveTargetGoals } from "./actions";
+import { removeTarget, saveTargetGoals, submitPlan } from "./actions";
 
 export type EditorTarget = {
   id: string;
@@ -27,23 +27,44 @@ const SAVE_DELAY_MS = 600;
 
 type SaveState = "idle" | "saving" | "saved" | "error";
 
+type GoalsPayload = { targetId: string; goalCall: number; goalEvtAtt: number; goalAemail: number };
+
+/**
+ * Plan affiché par brick avec ses totaux.
+ * - délégué, plan en création : objectifs modifiables, ajout / retrait de cibles, envoi au manager
+ * - sinon (plan envoyé, validé, en cours, ou vue du manager) : lecture seule
+ */
 export function PlanEditor({
   planId,
   planName,
+  ownerName,
   status,
   editable,
   initialTargets,
+  backHref = "/field",
+  notice,
+  panel,
 }: {
   planId: string;
   planName: string;
+  /** Nom du délégué, affiché quand c'est le manager qui consulte. */
+  ownerName?: string;
   status: PlanStatus;
   editable: boolean;
   initialTargets: EditorTarget[];
+  backHref?: string;
+  /** Bandeau d'état (envoyé, renvoyé, validé…) calculé côté serveur. */
+  notice?: ReactNode;
+  /** Bloc affiché sous le bandeau (ex. décision du manager). */
+  panel?: ReactNode;
 }) {
   const t = useTranslations();
   const [targets, setTargets] = useState(initialTargets);
   const [saveState, setSaveState] = useState<SaveState>("idle");
+  const [submitOpen, setSubmitOpen] = useState(false);
   const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>());
+  const queued = useRef(new Map<string, GoalsPayload>());
+  const inFlight = useRef(new Set<Promise<boolean>>());
   const pending = useRef(0);
 
   const totals = useMemo(() => sumGoals(targets), [targets]);
@@ -55,14 +76,35 @@ export function PlanEditor({
     return [...byBrick.entries()];
   }, [targets]);
 
-  async function track(promise: Promise<{ ok: boolean }>) {
+  function track(promise: Promise<{ ok: boolean }>) {
     pending.current += 1;
     setSaveState("saving");
-    const result = await promise.catch(() => ({ ok: false }));
-    pending.current -= 1;
-    if (!result.ok) setSaveState("error");
-    else if (pending.current === 0) setSaveState((s) => (s === "error" ? s : "saved"));
-    return result.ok;
+    const done: Promise<boolean> = promise
+      .catch(() => ({ ok: false }))
+      .then((result) => {
+        pending.current -= 1;
+        inFlight.current.delete(done);
+        if (!result.ok) setSaveState("error");
+        else if (pending.current === 0) setSaveState((s) => (s === "error" ? s : "saved"));
+        return result.ok;
+      });
+    inFlight.current.add(done);
+    return done;
+  }
+
+  function saveNow(id: string) {
+    clearTimeout(timers.current.get(id));
+    timers.current.delete(id);
+    const payload = queued.current.get(id);
+    queued.current.delete(id);
+    if (payload) void track(saveTargetGoals(payload));
+  }
+
+  /** Enregistre tout de suite les modifications en attente et attend la fin des enregistrements. */
+  async function flush() {
+    for (const id of [...queued.current.keys()]) saveNow(id);
+    const results = await Promise.all([...inFlight.current]);
+    return results.every(Boolean);
   }
 
   function updateGoal(id: string, key: GoalKey, raw: number) {
@@ -72,26 +114,23 @@ export function PlanEditor({
 
     // Enregistrement automatique, regroupé : une seule requête si on clique plusieurs fois vite.
     const updated = next.find((target) => target.id === id)!;
+    queued.current.set(id, {
+      targetId: id,
+      goalCall: updated.goalCall,
+      goalEvtAtt: updated.goalEvtAtt,
+      goalAemail: updated.goalAemail,
+    });
     clearTimeout(timers.current.get(id));
     timers.current.set(
       id,
-      setTimeout(() => {
-        timers.current.delete(id);
-        void track(
-          saveTargetGoals({
-            targetId: id,
-            goalCall: updated.goalCall,
-            goalEvtAtt: updated.goalEvtAtt,
-            goalAemail: updated.goalAemail,
-          }),
-        );
-      }, SAVE_DELAY_MS),
+      setTimeout(() => saveNow(id), SAVE_DELAY_MS),
     );
   }
 
   async function remove(target: EditorTarget) {
     if (!window.confirm(t("PlanEditor.confirmRemove", { name: target.name }))) return;
     clearTimeout(timers.current.get(target.id));
+    queued.current.delete(target.id);
     const previous = targets;
     setTargets(targets.filter((x) => x.id !== target.id));
     const ok = await track(removeTarget(target.id));
@@ -102,22 +141,38 @@ export function PlanEditor({
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <Link href="/field" className="text-sm text-foreground/60 hover:text-foreground">
+          <Link href={backHref} className="text-sm text-foreground/60 hover:text-foreground">
             ← {t("PlanEditor.back")}
           </Link>
           <h1 className="mt-1 font-mono text-2xl font-semibold">{planName}</h1>
           <p className="text-sm text-foreground/60">
+            {ownerName && <>{ownerName} · </>}
             {t(`Plan.status.${status}`)} · {t("Field.targets", { count: targets.length })}
           </p>
         </div>
-        {editable && <SaveIndicator state={saveState} />}
+        {editable && (
+          <div className="flex flex-wrap items-center gap-4">
+            <SaveIndicator state={saveState} />
+            <button
+              type="button"
+              onClick={() => setSubmitOpen(true)}
+              disabled={targets.length === 0}
+              title={targets.length === 0 ? t("Submit.needTargets") : undefined}
+              className="rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition hover:opacity-90 active:scale-95 disabled:opacity-40"
+            >
+              {t("Submit.button")} →
+            </button>
+          </div>
+        )}
       </div>
 
-      {!editable && (
-        <p className="rounded-xl bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
-          {t("PlanEditor.readOnly")}
-        </p>
-      )}
+      {notice ??
+        (!editable && (
+          <p className="rounded-xl bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
+            {t("PlanEditor.readOnly")}
+          </p>
+        ))}
+      {panel}
 
       {/* Totaux du plan */}
       <section className="sticky top-0 z-10 -mx-4 grid grid-cols-3 gap-3 bg-background/90 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
@@ -178,7 +233,8 @@ export function PlanEditor({
                     {rows.map((target) => (
                       <motion.tr
                         key={target.id}
-                        layout
+                        // Réorganisation animée seulement en édition (retrait d'une cible).
+                        layout={editable}
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0, x: -24 }}
@@ -233,7 +289,128 @@ export function PlanEditor({
           </Link>
         </div>
       )}
+
+      <AnimatePresence>
+        {submitOpen && (
+          <SubmitDialog
+            planId={planId}
+            totals={totals}
+            targetCount={targets.length}
+            flush={flush}
+            onClose={() => setSubmitOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </div>
+  );
+}
+
+function SubmitDialog({
+  planId,
+  totals,
+  targetCount,
+  flush,
+  onClose,
+}: {
+  planId: string;
+  totals: Record<GoalKey, number>;
+  targetCount: number;
+  flush: () => Promise<boolean>;
+  onClose: () => void;
+}) {
+  const t = useTranslations();
+  const [comment, setComment] = useState("");
+  const [state, setState] = useState<"idle" | "sending" | "empty" | "failed">("idle");
+  const busy = state === "sending";
+
+  async function send() {
+    setState("sending");
+    // Les dernières modifications doivent être enregistrées avant que le plan ne soit verrouillé.
+    if (!(await flush())) return setState("failed");
+    const result = await submitPlan({ planId, comment }).catch(
+      () => ({ ok: false, reason: "failed" }) as const,
+    );
+    if (result.ok) onClose();
+    else setState(result.reason);
+  }
+
+  return (
+    <motion.div
+      className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4 backdrop-blur-sm"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={() => !busy && onClose()}
+    >
+      <motion.div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="submit-title"
+        initial={{ scale: 0.95, y: 8 }}
+        animate={{ scale: 1, y: 0 }}
+        exit={{ scale: 0.95, y: 8 }}
+        onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.key === "Escape" && !busy && onClose()}
+        className="w-full max-w-md rounded-2xl border border-black/10 bg-background p-6 shadow-xl dark:border-white/15"
+      >
+        <h2 id="submit-title" className="text-lg font-semibold">
+          {t("Submit.title")}
+        </h2>
+        <p className="mt-1 text-sm text-foreground/60">{t("Submit.intro")}</p>
+
+        <dl className="mt-5 grid grid-cols-4 gap-2 text-center">
+          <div className="rounded-xl bg-foreground/5 p-2">
+            <dt className="text-xs text-foreground/60">{t("Manager.targets")}</dt>
+            <dd className="text-xl font-semibold tabular-nums">{targetCount}</dd>
+          </div>
+          {GOALS.map((key, i) => (
+            <div key={key} className={`rounded-xl p-2 ${CHIPS[i]}`}>
+              <dt className="text-xs">{t(`PlanEditor.short.${key}`)}</dt>
+              <dd className="text-xl font-semibold tabular-nums">{totals[key]}</dd>
+            </div>
+          ))}
+        </dl>
+
+        <label className="mt-5 block text-sm font-medium" htmlFor="submit-comment">
+          {t("Submit.comment")}
+        </label>
+        <textarea
+          id="submit-comment"
+          autoFocus
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          maxLength={1000}
+          rows={3}
+          placeholder={t("Submit.commentPlaceholder")}
+          className="mt-1.5 w-full resize-none rounded-lg border border-black/10 bg-transparent p-3 text-sm outline-none focus:border-foreground/40 dark:border-white/15"
+        />
+
+        {(state === "failed" || state === "empty") && (
+          <p role="alert" className="mt-3 text-sm text-red-700 dark:text-red-400">
+            {t(state === "empty" ? "Submit.needTargets" : "Submit.failed")}
+          </p>
+        )}
+
+        <div className="mt-6 flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={busy}
+            className="rounded-full px-4 py-2 text-sm text-foreground/70 transition hover:bg-foreground/5"
+          >
+            {t("Submit.cancel")}
+          </button>
+          <button
+            type="button"
+            onClick={send}
+            disabled={busy}
+            className="rounded-full bg-gradient-to-r from-indigo-500 to-fuchsia-500 px-5 py-2 text-sm font-medium text-white transition hover:opacity-90 active:scale-95 disabled:opacity-60"
+          >
+            {busy ? t("Submit.sending") : t("Submit.confirm")}
+          </button>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
 

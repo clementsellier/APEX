@@ -40,7 +40,8 @@
     "checkAndUpdate": "Consulter et demander une mise à jour",
     "prepareNext": "Préparer le prochain plan",
     "statsOverview": "Statistiques et vue d'ensemble",
-    "targets": "{count, plural, =0 {aucune cible} one {# cible} other {# cibles}}"
+    "targets": "{count, plural, =0 {aucune cible} one {# cible} other {# cibles}}",
+    "viewPlan": "Consulter le plan"
   },
   "Manager": {
     "title": "Plans de votre équipe",
@@ -48,7 +49,10 @@
     "owner": "Délégué",
     "plan": "Plan",
     "status": "Statut",
-    "targets": "Cibles"
+    "targets": "Cibles",
+    "toReview": "{count, plural, =0 {Aucun plan en attente de votre validation.} one {# plan attend votre validation.} other {# plans attendent votre validation.}}",
+    "review": "Examiner",
+    "view": "Voir"
   },
   "Plan": {
     "status": {
@@ -60,7 +64,7 @@
     }
   },
   "PlanEditor": {
-    "back": "Accueil",
+    "back": "Retour",
     "readOnly": "Ce plan est en cours : il est en lecture seule. Les demandes de modification seront possibles dans une prochaine étape.",
     "empty": "Aucune cible dans ce plan.",
     "brick": "Brick {code}",
@@ -141,5 +145,56 @@
     "empty": "Aucun PDS ne correspond à ces filtres.",
     "emptyAll": "Tous ces comptes de votre secteur sont déjà dans le plan.",
     "error": "L'opération a échoué. Rechargez la page et réessayez."
+  },
+  "Submit": {
+    "button": "Envoyer au manager",
+    "title": "Envoyer le plan en validation ?",
+    "intro": "Votre manager sera invité à le valider. Le plan ne sera plus modifiable, sauf s'il vous le renvoie.",
+    "comment": "Message pour votre manager (facultatif)",
+    "commentPlaceholder": "Ex. : j'ai renforcé la brick 25BES suite au lancement du produit B.",
+    "cancel": "Annuler",
+    "confirm": "Envoyer",
+    "sending": "Envoi…",
+    "needTargets": "Ajoutez au moins une cible avant d'envoyer le plan.",
+    "failed": "L'envoi a échoué. Rechargez la page et réessayez."
+  },
+  "Review": {
+    "title": "Votre décision",
+    "intro": "Validez ce plan, ou renvoyez-le à {name} avec un commentaire pour qu'il soit retravaillé.",
+    "comment": "Commentaire",
+    "commentPlaceholder": "Obligatoire pour un renvoi, facultatif pour une validation.",
+    "return": "Renvoyer au délégué",
+    "validate": "Valider le plan",
+    "confirmValidate": "Confirmer la validation de ce plan ?",
+    "needComment": "Expliquez au délégué ce qu'il doit revoir.",
+    "failed": "L'opération a échoué. Rechargez la page : le plan a peut-être déjà été traité."
+  },
+  "Workflow": {
+    "history": "Historique",
+    "action": {
+      "CREATED": "Plan créé",
+      "SUBMITTED": "Envoyé en validation",
+      "VALIDATED": "Validé",
+      "RETURNED": "Renvoyé au délégué",
+      "UPDATED_BY_MANAGER": "Modifié par le manager"
+    },
+    "notice": {
+      "submitted": {
+        "field": "Plan envoyé le {date}. Il attend la décision de votre manager et n'est plus modifiable.",
+        "manager": "{name} vous a envoyé ce plan le {date}."
+      },
+      "returned": {
+        "field": "{name} vous a renvoyé ce plan le {date}. Modifiez-le puis renvoyez-le.",
+        "manager": "Vous avez renvoyé ce plan le {date}. Il est en cours de reprise par le délégué."
+      },
+      "validated": {
+        "field": "🎉 Plan validé par {name} le {date}.",
+        "manager": "Vous avez validé ce plan le {date}."
+      },
+      "readOnly": {
+        "field": "Ce plan est en lecture seule. Les demandes de modification seront possibles dans une prochaine étape.",
+        "manager": "Ce plan est en lecture seule."
+      }
+    }
   }
 }

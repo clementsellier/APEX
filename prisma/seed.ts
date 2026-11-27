@@ -83,7 +83,7 @@ async function main() {
       crmId: "CRM-U-104",
     },
   });
-  await db.user.create({
+  const emma = await db.user.create({
     data: {
       ...base,
       email: "emma@apex.local",
@@ -122,6 +122,7 @@ async function main() {
       { code: "25BES", territory: "Sect104" },
       { code: "25LON", territory: "Sect104" },
       { code: "39DOL", territory: "Sect104" },
+      { code: "70VES", territory: "Sect105" },
     ],
   });
   await db.kpiDefinition.createMany({
@@ -373,6 +374,60 @@ async function main() {
       },
       events: {
         create: [{ actorId: arnaud.id, action: "CREATED", comment: `Copié de ${current.name}` }],
+      },
+    },
+  });
+
+  // ─── Plan d'Emma (secteur 105), envoyé en validation : à examiner par le manager ───
+  const emmaAccounts = await Promise.all(
+    [
+      ["Dr Claire FAIVRE", "Claire", "FAIVRE", "Cardiologue", "CH Vesoul"],
+      ["Dr Nicolas GIRARDOT", "Nicolas", "GIRARDOT", "Néphrologue", "CH Vesoul"],
+      ["Dr Inès MOREL", "Inès", "MOREL", "Médecin généraliste", "Cabinet Morel"],
+    ].map(([name, first, last, spe, place], i) =>
+      db.account.create({
+        data: {
+          crmId: `CRM-A-${2000 + i}`,
+          type: "HCP",
+          title: "Dr",
+          firstName: first,
+          lastName: last,
+          name,
+          specialty: spe,
+          workplace: place,
+          brickCode: "70VES",
+          addresses: {
+            create: { line1: place, city: "Vesoul", latitude: 47.62, longitude: 6.155 },
+          },
+        },
+      }),
+    ),
+  );
+  await db.plan.create({
+    data: {
+      name: "26C2-FRONCO-Sect105",
+      territory: "Sect105",
+      status: "IN_VALIDATION",
+      ownerId: emma.id,
+      cycleId: c2.id,
+      targets: {
+        create: emmaAccounts.map((a, i) => ({
+          accountId: a.id,
+          goalCall: [4, 3, 2][i],
+          goalEvtAtt: [2, 1, 1][i],
+          goalAemail: [1, 2, 0][i],
+        })),
+      },
+      events: {
+        create: [
+          { actorId: emma.id, action: "CREATED", createdAt: new Date("2026-11-20T09:00:00Z") },
+          {
+            actorId: emma.id,
+            action: "SUBMITTED",
+            comment: "Focus sur le CH de Vesoul pour le lancement du produit B.",
+            createdAt: new Date("2026-11-24T16:30:00Z"),
+          },
+        ],
       },
     },
   });

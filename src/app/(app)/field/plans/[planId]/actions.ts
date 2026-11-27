@@ -1,8 +1,11 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { requireRole } from "@/lib/dal";
 import { requireEditableTarget } from "@/lib/plans";
+import { MAX_COMMENT, transitionPlan } from "@/lib/plan-workflow";
 
 const MAX_GOAL = 99;
 
@@ -38,4 +41,43 @@ export async function removeTarget(targetId: string): Promise<SaveResult> {
   } catch {
     return { ok: false };
   }
+}
+
+const submitSchema = z.object({
+  planId: z.string().min(1),
+  comment: z.string().max(MAX_COMMENT).optional(),
+});
+
+export type SubmitResult = { ok: true } | { ok: false; reason: "empty" | "failed" };
+
+/** Envoie le plan au manager terrain : il passe « en validation » et n'est plus modifiable. */
+export async function submitPlan(input: z.input<typeof submitSchema>): Promise<SubmitResult> {
+  const parsed = submitSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, reason: "failed" };
+  const { planId, comment } = parsed.data;
+
+  try {
+    const user = await requireRole("FIELD_USER");
+    const plan = await db.plan.findFirst({
+      where: { id: planId, ownerId: user.id, status: "IN_CREATION" },
+      select: { _count: { select: { targets: true } } },
+    });
+    if (!plan) return { ok: false, reason: "failed" };
+    if (plan._count.targets === 0) return { ok: false, reason: "empty" };
+
+    const done = await transitionPlan({
+      planId,
+      from: "IN_CREATION",
+      to: "IN_VALIDATION",
+      action: "SUBMITTED",
+      actorId: user.id,
+      comment,
+    });
+    if (!done) return { ok: false, reason: "failed" };
+  } catch {
+    return { ok: false, reason: "failed" };
+  }
+
+  revalidatePath("/field", "layout");
+  return { ok: true };
 }
