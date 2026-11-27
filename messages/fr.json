@@ -93,5 +93,53 @@
     "light": "Clair",
     "system": "Système",
     "dark": "Sombre"
+  },
+  "AddTarget": {
+    "back": "Retour au plan",
+    "title": "Ajouter des cibles",
+    "done": "Terminé",
+    "search": "Rechercher un nom ou un lieu…",
+    "kind": {
+      "HCP": "Professionnels de santé",
+      "PHARMACY": "Pharmacies"
+    },
+    "filter": {
+      "specialty": "Spécialité",
+      "allSpecialties": "Toutes les spécialités",
+      "brick": "Brick",
+      "allBricks": "Toutes les bricks",
+      "call": "Visite en {cycle}",
+      "evt": "Événement en {cycle}",
+      "all": "Tous",
+      "with": "Avec",
+      "without": "Sans",
+      "reset": "Réinitialiser"
+    },
+    "results": "{count, plural, =0 {Aucun résultat} one {# résultat} other {# résultats}}",
+    "col": {
+      "brick": "Brick",
+      "name": "Nom",
+      "specialty": "Spécialité",
+      "place": "Lieu",
+      "qualifs": "Qualifications",
+      "lastCycle": "Activité {cycle}",
+      "lastCall": "Dernière visite"
+    },
+    "short": {
+      "call": "Vis.",
+      "evtAtt": "Évt",
+      "aemail": "Mail"
+    },
+    "activity": {
+      "call": "Visites au cycle précédent",
+      "evtAtt": "Participations à des événements au cycle précédent",
+      "aemail": "E-mails approuvés au cycle précédent"
+    },
+    "add": "Ajouter",
+    "added": "Ajouté",
+    "undo": "Annuler",
+    "empty": "Aucun PDS ne correspond à ces filtres.",
+    "emptyAll": "Tous ces comptes de votre secteur sont déjà dans le plan.",
+    "error": "L'opération a échoué. Rechargez la page et réessayez."
   }
 }

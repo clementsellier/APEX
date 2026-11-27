@@ -33,6 +33,10 @@ async function PlanPageContent({
 
   return (
     <PlanEditor
+      // L'éditeur garde ses cibles dans un état local : on le recrée quand la liste change
+      // côté serveur (cibles ajoutées depuis l'écran d'ajout), sinon il afficherait l'ancienne.
+      key={targets.map((t) => t.id).join()}
+      planId={plan.id}
       planName={plan.name}
       status={plan.status}
       editable={isEditable(plan.status)}
