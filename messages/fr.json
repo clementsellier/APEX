@@ -29,7 +29,6 @@
   },
   "Home": {
     "hello": "Bonjour, {name}",
-    "comingSoon": "Cet espace sera construit dans les prochaines étapes.",
     "soon": "Bientôt"
   },
   "Field": {
@@ -259,9 +258,11 @@
       "perAccount": "Int. / PDS"
     },
     "tabs": {
+      "plan": "Plan",
       "stats": "Tableau de bord",
       "map": "Carte"
-    }
+    },
+    "backToList": "Retour à la liste des plans"
   },
   "Admin": {
     "nav": {
@@ -503,7 +504,7 @@
     "targetsIn": "{count, plural, =0 {Aucune cible} one {# cible} other {# cibles}} dans cette UGA",
     "goals": "{call} vis. · {evtAtt} évt · {aemail} mail",
     "noTargetsHere": "Pensez à l'écran d'ajout de cibles pour couvrir cette UGA.",
-    "panelTitle": "Votre secteur",
+    "panelTitle": "Secteur du plan",
     "panelHint": "Survolez une UGA pour voir ses chiffres, cliquez dessus pour la liste de ses cibles.",
     "summary": "{zones} UGA · {targets} cibles, dont {located} géolocalisées",
     "view": {
@@ -522,5 +523,45 @@
     "ctrlScroll": "Ctrl + molette pour zoomer sur la carte",
     "cmdScroll": "⌘ + molette pour zoomer sur la carte",
     "twoFingers": "Utilisez deux doigts pour déplacer la carte"
+  },
+  "Overview": {
+    "scope": {
+      "TEAM_MANAGER": "Plans des délégués de votre équipe.",
+      "HQ_USER": "Plans de toutes les équipes."
+    },
+    "pipeline": "Circuit des plans",
+    "filter": {
+      "search": "Rechercher un plan, un délégué, un secteur…",
+      "status": "Statut",
+      "cycle": "Cycle",
+      "allCycles": "Tous les cycles",
+      "manager": "Manager terrain",
+      "allManagers": "Tous les managers",
+      "statuses": {
+        "validated": "Plans validés",
+        "all": "Tous les statuts",
+        "IN_CREATION": "En création",
+        "IN_VALIDATION": "En validation"
+      }
+    },
+    "tile": {
+      "targets": "Cibles",
+      "plans": "{count, plural, =0 {aucun plan} one {# plan} other {# plans}} affiché(s)",
+      "interactions": "Interactions prévues",
+      "calls": "dont {count} visites",
+      "perTarget": "Interactions par cible",
+      "perTargetHint": "moyenne des plans affichés"
+    },
+    "col": {
+      "plan": "Plan",
+      "owner": "Délégué",
+      "manager": "Manager terrain",
+      "status": "Statut",
+      "targets": "Cibles",
+      "interactions": "Interactions prévues"
+    },
+    "goals": "{call} visites · {evtAtt} événements · {aemail} e-mails",
+    "open": "Ouvrir",
+    "empty": "Aucun plan ne correspond à ces filtres."
   }
 }

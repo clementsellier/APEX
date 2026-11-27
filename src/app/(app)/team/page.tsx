@@ -1,10 +1,21 @@
 import { Suspense } from "react";
-import { PlaceholderHome } from "@/components/placeholder-home";
+import { PlansOverview } from "@/components/plans-overview/overview";
+import { requireRole } from "@/lib/dal";
 
-export default function Page() {
+// Accueil : circuit des plans, chiffres clés et liste filtrable.
+export default function TeamHome({ searchParams }: PageProps<"/team">) {
   return (
     <Suspense>
-      <PlaceholderHome role="TEAM_MANAGER" />
+      <TeamHomeContent searchParams={searchParams} />
     </Suspense>
   );
+}
+
+async function TeamHomeContent({
+  searchParams,
+}: {
+  searchParams: PageProps<"/team">["searchParams"];
+}) {
+  const [user, params] = await Promise.all([requireRole("TEAM_MANAGER"), searchParams]);
+  return <PlansOverview base="/team" firstName={user.firstName} searchParams={params} />;
 }

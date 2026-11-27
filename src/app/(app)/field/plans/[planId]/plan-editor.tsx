@@ -55,6 +55,7 @@ export function PlanEditor({
   mode = "field",
   notice,
   panel,
+  readOnlyNotice = true,
 }: {
   planId: string;
   planName: string;
@@ -70,6 +71,8 @@ export function PlanEditor({
   notice?: ReactNode;
   /** Bloc affiché sous le bandeau (ex. décision du manager). */
   panel?: ReactNode;
+  /** Bandeau « lecture seule » par défaut ; inutile dans les espaces de consultation. */
+  readOnlyNotice?: boolean;
 }) {
   const t = useTranslations();
   const [targets, setTargets] = useState(initialTargets);
@@ -192,7 +195,7 @@ export function PlanEditor({
       </div>
 
       {notice ??
-        (!editable && (
+        (!editable && readOnlyNotice && (
           <p className="rounded-xl bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-300">
             {t("PlanEditor.readOnly")}
           </p>

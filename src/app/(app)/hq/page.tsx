@@ -1,10 +1,17 @@
 import { Suspense } from "react";
-import { PlaceholderHome } from "@/components/placeholder-home";
+import { PlansOverview } from "@/components/plans-overview/overview";
+import { requireRole } from "@/lib/dal";
 
-export default function Page() {
+// Accueil : circuit des plans, chiffres clés et liste filtrable.
+export default function HqHome({ searchParams }: PageProps<"/hq">) {
   return (
     <Suspense>
-      <PlaceholderHome role="HQ_USER" />
+      <HqHomeContent searchParams={searchParams} />
     </Suspense>
   );
+}
+
+async function HqHomeContent({ searchParams }: { searchParams: PageProps<"/hq">["searchParams"] }) {
+  const [user, params] = await Promise.all([requireRole("HQ_USER"), searchParams]);
+  return <PlansOverview base="/hq" firstName={user.firstName} searchParams={params} />;
 }
