@@ -112,7 +112,7 @@ function Card({
   return (
     <Link
       href={href}
-      className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-black/10 p-6 transition hover:border-black/25 dark:border-white/10 dark:hover:border-white/25"
+      className="group relative flex flex-col gap-4 overflow-hidden rounded-2xl border bg-surface border-black/10 p-6 transition hover:border-black/25 dark:border-white/10 dark:hover:border-white/25"
     >
       <div className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${accent}`} />
       <div className="flex items-start justify-between">

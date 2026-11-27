@@ -102,7 +102,7 @@ export async function PlansOverview({
         ].map((tile, i) => (
           <div
             key={tile.label}
-            className="relative overflow-hidden rounded-xl border border-black/10 p-4 dark:border-white/10"
+            className="relative overflow-hidden rounded-xl border bg-surface border-black/10 p-4 dark:border-white/10"
           >
             <div className={`absolute inset-x-0 top-0 h-1 ${ACCENTS[i]}`} />
             <div className="text-sm text-foreground/60">{tile.label}</div>
@@ -112,7 +112,7 @@ export async function PlansOverview({
         ))}
       </section>
 
-      <div className="overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
+      <div className="overflow-x-auto rounded-2xl border bg-surface border-black/10 dark:border-white/10">
         <table className="w-full min-w-[820px] text-left text-sm">
           <thead className="bg-foreground/5 text-foreground/60">
             <tr>

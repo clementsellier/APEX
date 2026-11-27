@@ -35,7 +35,7 @@ export function UgaImport() {
   const applied = result?.ok && result.applied !== undefined;
 
   return (
-    <section className="flex flex-col gap-4 rounded-2xl border border-black/10 p-5 dark:border-white/10">
+    <section className="flex flex-col gap-4 rounded-2xl border bg-surface border-black/10 p-5 dark:border-white/10">
       <div>
         <h2 className="font-medium">{t("title")}</h2>
         <p className="text-sm text-foreground/60">{t("intro")}</p>

@@ -297,7 +297,7 @@ export function UgaMap({
       const el = document.createElement("div");
       el.textContent = l.text;
       el.className =
-        "pointer-events-none rounded bg-background/85 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-foreground shadow-sm";
+        "pointer-events-none rounded bg-surface/90 px-1.5 py-0.5 font-mono text-[10px] font-semibold text-foreground shadow-sm";
       // Ancrée par le bas, au-dessus de la zone : l'étiquette ne masque ni la zone ni ses cibles.
       return new Marker({ element: el, anchor: "bottom", offset: [0, -6] })
         .setLngLat([l.lng, l.lat])
@@ -307,7 +307,7 @@ export function UgaMap({
 
   return (
     <div
-      className="relative overflow-hidden rounded-2xl border border-black/10 dark:border-white/10"
+      className="relative overflow-hidden rounded-2xl border bg-surface border-black/10 dark:border-white/10"
       style={{ height }}
     >
       {/* Hauteur explicite : la feuille de style de MapLibre impose position: relative au conteneur. */}
@@ -315,7 +315,7 @@ export function UgaMap({
       {hover && tooltip && (
         <div
           role="tooltip"
-          className="pointer-events-none absolute z-10 w-56 rounded-lg border border-black/10 bg-background p-3 text-xs shadow-lg dark:border-white/15"
+          className="pointer-events-none absolute z-10 w-56 rounded-lg border border-black/10 bg-surface p-3 text-xs shadow-lg dark:border-white/15"
           style={{
             left: Math.max(0, Math.min(hover.x + 14, hover.width - 236)),
             top: hover.y + 14,

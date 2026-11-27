@@ -34,7 +34,7 @@ async function LoginCard({ searchParams }: { searchParams: PageProps<"/login">["
         <ThemeSwitcher initial={theme} />
         <LocaleSwitcher />
       </div>
-      <div className="rounded-2xl border border-black/10 bg-background/80 p-8 shadow-xl shadow-indigo-500/5 backdrop-blur dark:border-white/10">
+      <div className="rounded-2xl border border-black/10 bg-surface/90 p-8 shadow-xl shadow-indigo-500/5 backdrop-blur dark:border-white/10">
         <h1 className="text-3xl font-semibold tracking-tight">{t("App.name")}</h1>
         <p className="mb-8 text-foreground/60">{t("App.tagline")}</p>
         <LoginForm callbackUrl={typeof callbackUrl === "string" ? callbackUrl : undefined} />

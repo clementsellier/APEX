@@ -171,7 +171,7 @@ export function AdminMap({ zones, sectors }: { zones: AdminZone[]; sectors: Sect
       </div>
 
       <aside className="flex flex-col gap-4 text-sm">
-        <div className="rounded-2xl border border-black/10 p-4 dark:border-white/10">
+        <div className="rounded-2xl border bg-surface border-black/10 p-4 dark:border-white/10">
           <p className="text-foreground/60">
             {t("coverage", { assigned, total: zones.length, sectors: sectors.length })}
           </p>
@@ -244,7 +244,7 @@ export function AdminMap({ zones, sectors }: { zones: AdminZone[]; sectors: Sect
         )}
 
         {zone && !editing && (
-          <div className="rounded-2xl border border-black/10 p-4 dark:border-white/10">
+          <div className="rounded-2xl border bg-surface border-black/10 p-4 dark:border-white/10">
             <p className="font-mono font-semibold">{zone.code}</p>
             <p className="text-foreground/70">
               {t("department", { code: zone.department ?? "—" })} ·{" "}
@@ -254,7 +254,7 @@ export function AdminMap({ zones, sectors }: { zones: AdminZone[]; sectors: Sect
           </div>
         )}
 
-        <div className="rounded-2xl border border-black/10 dark:border-white/10">
+        <div className="rounded-2xl border bg-surface border-black/10 dark:border-white/10">
           <p className="border-b border-black/10 px-4 py-3 font-medium dark:border-white/10">
             {t("sectors")}
           </p>

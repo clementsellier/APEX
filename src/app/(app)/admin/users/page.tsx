@@ -88,7 +88,7 @@ async function UsersContent({
 
       <UserFilters q={q} role={role} status={status} />
 
-      <div className="overflow-x-auto rounded-2xl border border-black/10 dark:border-white/10">
+      <div className="overflow-x-auto rounded-2xl border bg-surface border-black/10 dark:border-white/10">
         <table className="w-full min-w-[860px] text-left text-sm">
           <thead className="bg-foreground/5 text-foreground/60">
             <tr>
